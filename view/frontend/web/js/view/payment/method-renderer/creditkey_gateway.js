@@ -8,9 +8,12 @@ define(
     [
       'jquery',
       'Magento_Checkout/js/view/payment/default',
-      'Magento_Checkout/js/checkout-data'
+      'Magento_Checkout/js/action/place-order',
+      'Magento_Checkout/js/action/select-payment-method',
+      'Magento_Checkout/js/checkout-data',
+      'Magento_Checkout/js/model/payment/additional-validators'
     ],
-    function ($, Component, checkoutData) {
+    function ($, Component, placeOrderAction, selectPaymentMethodAction, checkoutData, additionalValidators) {
         'use strict';
 
         return Component.extend({
@@ -24,10 +27,10 @@ define(
             },
 
             redirectAfterPlaceOrder: false,
-            placeOrder: function() {
-              var data = window.checkoutConfig.payment.creditkey_gateway;
-              var billingData = checkoutData.getBillingAddressFromData();
-              var returnParams = '?ref=' + data.quoteId + '&key=%CKKEY%&secure=true';
+            placeOrder: function(data, event) {
+              if (event) {
+                event.preventDefault();
+              }
 
               var loginForm = $('.form-login').validation();
               var ignore = null;
@@ -37,25 +40,50 @@ define(
                 return false;
               }
 
-              if (this.validate()) {
-                var payload = {
-                  first_name: billingData.firstname,
-                  last_name: billingData.last_name,
-                  address1: billingData.street[0],
-                  address2: billingData.street[1],
-                  city: billingData.city,
-                  state: billingData.region,
-                  zip: billingData.postcode,
-                  phone: billingData.telephone,
-                  amount: window.checkoutConfig.totalsData.subtotal,
-                  return_url: data.returnUrl + returnParams,
-                  cancel_url: data.cancelUrl + returnParams,
-                  merchant: data.publicKey,
-                  email: checkoutData.getInputFieldEmailValue()
-                };
+              var self = this,
+                placeOrder;
+              
+              if (this.validate() && additionalValidators.validate()) {
+                this.isPlaceOrderActionAllowed(false);
+                placeOrder = placeOrderAction(this.getData(), false, this.messageContainer);
 
-                window.location = data.redirectUrl + $.param(payload); 
+                $.when(placeOrder)
+                  .fail(function() {
+                    self.isPlaceOrderActionAllowed(true);
+                  }).done(this.afterPlaceOrder.bind(this));
+                return true;
               }
+              return false;
+            },
+
+            selectPaymentMethod: function() {
+              selectPaymentMethodAction(this.getData());
+              checkoutData.setSelectedPaymentMethod(this.item.method);
+              return true;
+            },
+
+            afterPlaceOrder: function() {
+              var data = window.checkoutConfig.payment.creditkey_gateway;
+              var billingData = checkoutData.getBillingAddressFromData();
+              var returnParams = '?ref=' + data.quoteId + '&key=%CKKEY%&secure=true';
+
+              var payload = {
+                first_name: billingData.firstname,
+                last_name: billingData.last_name,
+                address1: billingData.street[0],
+                address2: billingData.street[1],
+                city: billingData.city,
+                state: billingData.region,
+                zip: billingData.postcode,
+                phone: billingData.telephone,
+                amount: window.checkoutConfig.totalsData.subtotal,
+                return_url: data.returnUrl + returnParams,
+                cancel_url: data.cancelUrl + returnParams,
+                merchant: data.publicKey,
+                email: checkoutData.getInputFieldEmailValue()
+              };
+
+              window.location = data.redirectUrl + $.param(payload); 
             }
         });
     }

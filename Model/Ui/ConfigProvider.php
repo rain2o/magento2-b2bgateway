@@ -47,8 +47,8 @@ final class ConfigProvider implements ConfigProviderInterface
                     'redirectUrl' => $this->getMerchantEndpoint(),
                     'publicKey' => $this->getPublicKey(),
                     'baseUrl' => $this->_urlBuilder->getUrl(),
-                    'returnUrl' => $this->_urlBuilder->getUrl('creditkey_gateway/complete'),
-                    'cancelUrl'=> $this->_urlBuilder->getUrl('creditkey_gateway/cancel'),
+                    'returnUrl' => $this->_urlBuilder->getUrl('creditkey_gateway/order/complete'),
+                    'cancelUrl'=> $this->_urlBuilder->getUrl('creditkey_gateway/order/cancel'),
                     'transactionResults' => [
                         ClientMock::SUCCESS => __('Success'),
                         ClientMock::FAILURE => __('Fraud')

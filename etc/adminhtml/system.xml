@@ -24,15 +24,15 @@
                 </field>
                 <field id="creditkey_endpoint" translate="label" sortOrder="3" type="text" showInDefault="1" showInWebsite="1">
                   <label>API Endpoint</label>
-                  <source_model>CreditKey\B2BGateway\Model\Options</source_model>
+                  <source_model>Creditkey\B2BGateway\Model\Options</source_model>
                 </field>
                 <field id="creditkey_publickey" translate="label" sortOrder="4" type="text" showInDefault="1" showInWebsite="1">
                   <label>Public Key</label>
-                  <source_model>CreditKey\B2BGateway\Model\Options</source_model>
+                  <source_model>Creditkey\B2BGateway\Model\Options</source_model>
                 </field>
                 <field id="creditkey_sharedsecret" translate="label" sortOrder="5" type="text" showInDefault="1" showInWebsite="1">
                   <label>Shared Secret</label>
-                  <source_model>CreditKey\B2BGateway\Model\Options</source_model>
+                  <source_model>Creditkey\B2BGateway\Model\Options</source_model>
                 </field>
                 <field id="creditkey_debug" translate="label" sortOrder="10" type="select" showInDefault="1" showInWebsite="1">
                   <label>Debug</label>
