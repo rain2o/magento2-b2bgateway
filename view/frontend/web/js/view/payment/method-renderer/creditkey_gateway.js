@@ -26,6 +26,17 @@ define(
                 return 'creditkey_gateway';
             },
 
+            getData: function() {
+              var customData = window.checkoutConfig.payment.creditkey_gateway;
+              return {
+                'method': this.item.method,
+                'additional_data': {
+                  'ck_public_key': customData.publicKey,
+                  'transaction-result': ''
+                }
+              }
+            },
+
             redirectAfterPlaceOrder: false,
             placeOrder: function(data, event) {
               if (event) {
@@ -42,7 +53,7 @@ define(
 
               var self = this,
                 placeOrder;
-              
+
               if (this.validate() && additionalValidators.validate()) {
                 this.isPlaceOrderActionAllowed(false);
                 placeOrder = placeOrderAction(this.getData(), false, this.messageContainer);

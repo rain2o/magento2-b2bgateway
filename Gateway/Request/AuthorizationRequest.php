@@ -8,6 +8,7 @@ namespace Creditkey\B2BGateway\Gateway\Request;
 use Magento\Payment\Gateway\ConfigInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
+use \Psr\Log\LoggerInterface;
 
 class AuthorizationRequest implements BuilderInterface
 {
@@ -16,13 +17,17 @@ class AuthorizationRequest implements BuilderInterface
      */
     private $config;
 
+    private $logger;
+
     /**
      * @param ConfigInterface $config
      */
     public function __construct(
-        ConfigInterface $config
+      ConfigInterface $config,
+      LoggerInterface $logger
     ) {
-        $this->config = $config;
+      $this->config = $config;
+      $this->logger = $logger;
     }
 
     /**

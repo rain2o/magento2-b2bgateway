@@ -7,25 +7,36 @@ namespace Creditkey\B2BGateway\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Payment\Observer\AbstractDataAssignObserver;
+use Magento\Quote\Api\Data\PaymentInterface;
+use \Psr\Log\LoggerInterface;
 
 class DataAssignObserver extends AbstractDataAssignObserver
 {
+    protected $logger;
+
+    public function __construct(
+      LoggerInterface $logger
+    ) {
+      $this->logger = $logger;
+    }
+
     /**
      * @param Observer $observer
      * @return void
      */
     public function execute(Observer $observer)
     {
-        $method = $this->readMethodArgument($observer);
-        $data = $this->readDataArgument($observer);
+				$data = $this->readDataArgument($observer);
 
-        $paymentInfo = $method->getInfoInstance();
+				$additionalData = $data->getData(PaymentInterface::KEY_ADDITIONAL_DATA);
+				if (!is_array($additionalData)) {
+						return;
+				}
 
-        if ($data->getDataByKey('transaction_result') !== null) {
-            $paymentInfo->setAdditionalInformation(
-                'transaction_result',
-                $data->getDataByKey('transaction_result')
-            );
-        }
+				$paymentModel = $this->readPaymentModelArgument($observer);
+
+				$paymentModel->setAdditionalInformation(
+						$additionalData
+				);
     }
 }

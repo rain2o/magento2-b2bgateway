@@ -7,10 +7,19 @@ namespace Creditkey\B2BGateway\Gateway\Response;
 
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
+use Magento\Sales\Model\Order;
+use \Psr\Log\LoggerInterface;
 
-class TxnIdHandler implements HandlerInterface
+class InitHandler implements HandlerInterface
 {
-    const TXN_ID = 'TXN_ID';
+
+    protected $logger;
+
+    public function __construct(
+      LoggerInterface $logger
+    ) {
+      $this->logger = $logger;
+    }
 
     /**
      * Handles transaction id
@@ -29,12 +38,11 @@ class TxnIdHandler implements HandlerInterface
 
         /** @var PaymentDataObjectInterface $paymentDO */
         $paymentDO = $handlingSubject['payment'];
-
         $payment = $paymentDO->getPayment();
 
-        /** @var $payment \Magento\Sales\Model\Order\Payment */
-        $ckKey = $payment->getAdditionalInformation('ck_public_key');
-        $payment->setTransactionId($ckKey);
-        $payment->setIsTransactionClosed(false);
+        $order = $payment->getOrder();
+        $order->setState(Order::STATE_PENDING_PAYMENT);
+        $order->setStatus('pending_payment');
+        $order->save();
     }
 }

@@ -64,7 +64,7 @@
         <arguments>
             <argument name="builders" xsi:type="array">
                 <item name="transaction" xsi:type="string">Creditkey\B2BGateway\Gateway\Request\AuthorizationRequest</item>
-                <item name="mockData" xsi:type="string">Creditkey\B2BGateway\Gateway\Request\MockDataRequest</item>
+                <item name="mockData" xsi:type="string">Creditkey\B2BGateway\Gateway\Request\AuthorizationDataRequest</item>
             </argument>
         </arguments>
     </virtualType>
@@ -81,7 +81,7 @@
             <argument name="handler" xsi:type="object">Creditkey\B2BGateway\Gateway\Response\TxnIdHandler</argument>
             <argument name="transferFactory" xsi:type="object">Creditkey\B2BGateway\Gateway\Http\TransferFactory</argument>
             <argument name="validator" xsi:type="object">Creditkey\B2BGateway\Gateway\Validator\ResponseCodeValidator</argument>
-            <argument name="client" xsi:type="object">Creditkey\B2BGateway\Gateway\Http\Client\ClientMock</argument>
+            <argument name="client" xsi:type="object">Creditkey\B2BGateway\Gateway\Http\Client\ClientCapture</argument>
         </arguments>
     </virtualType>
 
@@ -114,6 +114,7 @@
     <virtualType name="CreditkeyB2BGatewayResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <item name="init" xsi:type="string">Creditkey\B2BGateway\Gateway\Response\InitHandler</item>
                 <item name="txnid" xsi:type="string">Creditkey\B2BGateway\Gateway\Response\TxnIdHandler</item>
                 <item name="fraud" xsi:type="string">Creditkey\B2BGateway\Gateway\Response\FraudHandler</item>
             </argument>

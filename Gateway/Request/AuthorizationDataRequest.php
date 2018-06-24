@@ -5,28 +5,20 @@
  */
 namespace Creditkey\B2BGateway\Gateway\Request;
 
-use Magento\Payment\Gateway\ConfigInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
-use Magento\Sales\Api\Data\OrderPaymentInterface;
+use Creditkey\B2BGateway\Gateway\Http\Client\ClientMock;
 use \Psr\Log\LoggerInterface;
 
-class CaptureRequest implements BuilderInterface
+class AuthorizationDataRequest implements BuilderInterface
 {
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
-    private $logger;
+    const FORCE_RESULT = 'FORCE_RESULT';
 
-    /**
-     * @param ConfigInterface $config
-     */
+    protected $logger;
+
     public function __construct(
-      ConfigInterface $config,
       LoggerInterface $logger
     ) {
-      $this->config = $config;
       $this->logger = $logger;
     }
 
@@ -46,20 +38,13 @@ class CaptureRequest implements BuilderInterface
 
         /** @var PaymentDataObjectInterface $paymentDO */
         $paymentDO = $buildSubject['payment'];
-        $order = $paymentDO->getOrder();
         $payment = $paymentDO->getPayment();
 
-        if (!$payment instanceof OrderPaymentInterface) {
-            throw new \LogicException('Order payment should be provided.');
-        }
-
+        $transactionResult = $payment->getAdditionalInformation('transaction_result');
         return [
-            'TXN_TYPE' => 'S',
-            'TXN_ID' => $payment->getLastTransId(),
-            'MERCHANT_KEY' => $this->config->getValue(
-                'merchant_gateway_key',
-                $order->getStoreId()
-            )
+            self::FORCE_RESULT => $transactionResult === null
+                ? ClientMock::SUCCESS
+                : $transactionResult
         ];
     }
 }
