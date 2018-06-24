@@ -8,10 +8,11 @@ namespace Creditkey\B2BGateway\Gateway\Http;
 use Magento\Payment\Gateway\Http\TransferBuilder;
 use Magento\Payment\Gateway\Http\TransferFactoryInterface;
 use Magento\Payment\Gateway\Http\TransferInterface;
-use Creditkey\B2BGateway\Gateway\Request\MockDataRequest;
 
 class TransferFactory implements TransferFactoryInterface
 {
+    private $scopeConfig;
+
     /**
      * @var TransferBuilder
      */
@@ -38,12 +39,22 @@ class TransferFactory implements TransferFactoryInterface
             ->setBody($request)
             ->setMethod('POST')
             ->setHeaders(
-                [
-                    'force_result' => isset($request[MockDataRequest::FORCE_RESULT])
-                        ? $request[MockDataRequest::FORCE_RESULT]
-                        : null
-                ]
+                ['Content-Type' => 'application/json']
             )
+            ->setUri($this->getUrl($request))
             ->build();
+    }
+
+    public function getUrl($request) {
+      if (!isset($request['action'])) return false;
+
+      switch ($request['action']) {
+        case 'capture':
+          return $request['baseUrl'].'/api/orders/'.$request['ck_key'].'/capture.json';
+        break;
+
+        case 'cancel':
+        break;
+      }
     }
 }

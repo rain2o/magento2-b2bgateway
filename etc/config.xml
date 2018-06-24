@@ -9,9 +9,10 @@
     <default>
         <payment>
             <creditkey_gateway>
+                <can_initialize>1</can_initialize>
                 <debug>1</debug>
                 <active>0</active>
-                <model>CreditkeyB2BGatewayFacade</model>
+                <model>Creditkey\B2BGateway\Model\PaymentMethodFacade</model>
                 <merchant_gateway_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
                 <order_status>pending_payment</order_status>
                 <payment_action>authorize</payment_action>

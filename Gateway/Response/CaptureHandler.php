@@ -7,10 +7,16 @@ namespace Creditkey\B2BGateway\Gateway\Response;
 
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
+use \Psr\Log\LoggerInterface;
 
-class TxnIdHandler implements HandlerInterface
+class CaptureHandler implements HandlerInterface
 {
-    const TXN_ID = 'TXN_ID';
+
+    public function __construct(
+      LoggerInterface $logger
+    ) {
+      $this->logger = $logger;
+    }
 
     /**
      * Handles transaction id
@@ -27,14 +33,11 @@ class TxnIdHandler implements HandlerInterface
             throw new \InvalidArgumentException('Payment data object should be provided');
         }
 
-        /** @var PaymentDataObjectInterface $paymentDO */
         $paymentDO = $handlingSubject['payment'];
-
         $payment = $paymentDO->getPayment();
 
-        /** @var $payment \Magento\Sales\Model\Order\Payment */
-        $ckKey = $payment->getAdditionalInformation('ck_public_key');
-        $payment->setTransactionId($ckKey);
-        $payment->setIsTransactionClosed(false);
+        $payment->setParentTransactionId($payment->getLastTransId());
+        $payment->setTransactionId($response[0]->id);
+        $payment->setShouldCloseParentTransaction(true);
     }
 }

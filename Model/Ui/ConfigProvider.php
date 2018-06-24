@@ -10,7 +10,6 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Checkout\Model\Cart;
-use Creditkey\B2BGateway\Gateway\Http\Client\ClientMock;
 
 /**
  * Class ConfigProvider
@@ -48,11 +47,7 @@ final class ConfigProvider implements ConfigProviderInterface
                     'publicKey' => $this->getPublicKey(),
                     'baseUrl' => $this->_urlBuilder->getUrl(),
                     'returnUrl' => $this->_urlBuilder->getUrl('creditkey_gateway/order/complete'),
-                    'cancelUrl'=> $this->_urlBuilder->getUrl('creditkey_gateway/order/cancel'),
-                    'transactionResults' => [
-                        ClientMock::SUCCESS => __('Success'),
-                        ClientMock::FAILURE => __('Fraud')
-                    ]
+                    'cancelUrl'=> $this->_urlBuilder->getUrl('creditkey_gateway/order/cancel')
                 ]
             ]
         ];
