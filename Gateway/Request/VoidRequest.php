@@ -9,21 +9,27 @@ use Magento\Payment\Gateway\ConfigInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Store\Model\ScopeInterface;
+use \Psr\Log\LoggerInterface;
 
 class VoidRequest implements BuilderInterface
 {
     /**
      * @var ConfigInterface
      */
-    private $config;
+    private $scopeConfig;
+    private $logger;
 
     /**
      * @param ConfigInterface $config
      */
     public function __construct(
-        ConfigInterface $config
+      ScopeConfigInterface $scopeConfig,
+      LoggerInterface $logger
     ) {
-        $this->config = $config;
+      $this->scopeConfig = $scopeConfig;
+      $this->logger = $logger;
     }
 
     /**
@@ -42,21 +48,20 @@ class VoidRequest implements BuilderInterface
 
         /** @var PaymentDataObjectInterface $paymentDO */
         $paymentDO = $buildSubject['payment'];
-
-        $order = $paymentDO->getOrder();
         $payment = $paymentDO->getPayment();
+
+        $ckKey = $payment->getAdditionalInformation('ck_public_key');
 
         if (!$payment instanceof OrderPaymentInterface) {
             throw new \LogicException('Order payment should be provided.');
         }
 
         return [
-            'TXN_TYPE' => 'V',
-            'TXN_ID' => $payment->getLastTransId(),
-            'MERCHANT_KEY' => $this->config->getValue(
-                'merchant_gateway_key',
-                $order->getStoreId()
-            )
+          'action' => 'void',
+          'ck_key' => $ckKey,
+          'baseUrl' => $this->scopeConfig->getValue('payment/creditkey_gateway/creditkey_endpoint', ScopeInterface::SCOPE_STORE),
+          'public_key' => $this->scopeConfig->getValue('payment/creditkey_gateway/creditkey_publickey', ScopeInterface::SCOPE_STORE),
+          'shared_secret' => $this->scopeConfig->getValue('payment/creditkey_gateway/creditkey_sharedsecret', ScopeInterface::SCOPE_STORE)
         ];
     }
 }

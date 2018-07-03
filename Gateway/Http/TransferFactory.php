@@ -49,12 +49,9 @@ class TransferFactory implements TransferFactoryInterface
       if (!isset($request['action'])) return false;
 
       switch ($request['action']) {
-        case 'capture':
-          return $request['baseUrl'].'/api/orders/'.$request['ck_key'].'/capture.json';
-        break;
-
-        case 'cancel':
-        break;
+        default:
+          return $request['baseUrl'].'/api/orders/'.$request['ck_key'].'/'.$request['action'].'.json';
       }
+
     }
 }
