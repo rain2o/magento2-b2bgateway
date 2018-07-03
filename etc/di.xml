@@ -40,6 +40,7 @@
                 <item name="authorize" xsi:type="string">Creditkey\B2BGateway\Gateway\Command\AuthorizeCommand</item>
                 <item name="capture" xsi:type="string">CreditkeyB2BGatewayCaptureCommand</item>
                 <item name="void" xsi:type="string">CreditkeyB2BGatewayVoidCommand</item>
+                <item name="refund" xsi:type="string">CreditkeyB2BGatewayRefundCommand</item>
             </argument>
         </arguments>
     </virtualType>
@@ -72,6 +73,22 @@
 
     <!-- Void Request -->
     <type name="Creditkey\B2BGateway\Gateway\Request\VoidRequest">
+        <arguments>
+            <argument name="config" xsi:type="object">CreditkeyB2BGatewayConfig</argument>
+        </arguments>
+    </type>
+
+    <!-- Refund command -->
+    <virtualType name="CreditkeyB2BGatewayRefundCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">Creditkey\B2BGateway\Gateway\Request\RefundRequest</argument>
+            <argument name="transferFactory" xsi:type="object">Creditkey\B2BGateway\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">Creditkey\B2BGateway\Gateway\Http\Client\CurlClient</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Void Request -->
+    <type name="Creditkey\B2BGateway\Gateway\Request\RefundRequest">
         <arguments>
             <argument name="config" xsi:type="object">CreditkeyB2BGatewayConfig</argument>
         </arguments>
