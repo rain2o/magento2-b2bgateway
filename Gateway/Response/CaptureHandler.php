@@ -7,13 +7,10 @@ namespace Creditkey\B2BGateway\Gateway\Response;
 
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
-use Magento\Sales\Model\Order;
 use \Psr\Log\LoggerInterface;
 
-class InitHandler implements HandlerInterface
+class CaptureHandler implements HandlerInterface
 {
-
-    protected $logger;
 
     public function __construct(
       LoggerInterface $logger
@@ -36,13 +33,11 @@ class InitHandler implements HandlerInterface
             throw new \InvalidArgumentException('Payment data object should be provided');
         }
 
-        /** @var PaymentDataObjectInterface $paymentDO */
         $paymentDO = $handlingSubject['payment'];
         $payment = $paymentDO->getPayment();
 
-        $order = $payment->getOrder();
-        $order->setState(Order::STATE_PENDING_PAYMENT);
-        $order->setStatus('pending_payment');
-        $order->save();
+        $payment->setParentTransactionId($payment->getLastTransId());
+        $payment->setTransactionId($response[0]->id);
+        $payment->setShouldCloseParentTransaction(true);
     }
 }
