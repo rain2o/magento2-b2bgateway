@@ -22,6 +22,10 @@ define(
                 transactionResult: ''
             },
 
+            getPaymentAcceptanceMarkSrc: function () {
+              return window.checkoutConfig.payment.creditkey_gateway.assetSrc;
+            },
+
             getCode: function() {
                 return 'creditkey_gateway';
             },
@@ -75,12 +79,23 @@ define(
 
             afterPlaceOrder: function() {
               var data = window.checkoutConfig.payment.creditkey_gateway;
+              var items = window.checkoutConfig.quoteItemData;
               var billingData = checkoutData.getBillingAddressFromData();
               var returnParams = '?ref=' + data.quoteId + '&key=%CKKEY%&secure=true';
 
+              items = items.map(function(i) {
+                return {
+                  merchant_id: i.store_id,
+                  name: i.name,
+                  price: i.price,
+                  quantity: i.qty,
+                  sku: i.sku
+                }
+              });
+
               var payload = {
                 first_name: billingData.firstname,
-                last_name: billingData.last_name,
+                last_name: billingData.lastname,
                 address1: billingData.street[0],
                 address2: billingData.street[1],
                 city: billingData.city,
@@ -91,7 +106,8 @@ define(
                 return_url: data.returnUrl + returnParams,
                 cancel_url: data.cancelUrl + returnParams,
                 merchant: data.publicKey,
-                email: checkoutData.getInputFieldEmailValue()
+                email: checkoutData.getInputFieldEmailValue(),
+                cart_items: JSON.stringify(items)
               };
 
               window.location = data.redirectUrl + $.param(payload); 

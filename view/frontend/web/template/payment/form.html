@@ -11,7 +11,8 @@
                class="radio"
                data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()"/>
         <label class="label" data-bind="attr: {'for': getCode()}">
-            <span data-bind="text: getTitle()"></span>
+          <img data-bind="attr: {src: getPaymentAcceptanceMarkSrc(), alt: $t('Acceptance Mark')}" class="payment-icon" width="175" /> 
+          <span data-bind="text: getTitle()" style="color: #0BC9CD; font-weight: bold;"></span>
         </label>
     </div>
 

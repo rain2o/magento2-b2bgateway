@@ -10,6 +10,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Checkout\Model\Cart;
+use Magento\Framework\View\Asset\Repository;
 
 /**
  * Class ConfigProvider
@@ -21,15 +22,18 @@ final class ConfigProvider implements ConfigProviderInterface
     protected $cart;
     protected $urlBuilder;
     protected $_configScopeConfigInterface;
+    protected $_assetRepo;
 
     public function __construct(
       Cart $cart,
       UrlInterface $urlBuilder,
-      ScopeConfigInterface $configScopeConfigInterface
+      ScopeConfigInterface $configScopeConfigInterface,
+      Repository $_assetRepo
     ) {
       $this->_cart = $cart;
       $this->_urlBuilder = $urlBuilder;
       $this->_configScopeConfigInterface = $configScopeConfigInterface;
+      $this->_assetRepo = $_assetRepo;
     }
 
     /**
@@ -42,6 +46,7 @@ final class ConfigProvider implements ConfigProviderInterface
         return [
             'payment' => [
                 self::CODE => [
+                    'assetSrc' => $this->_assetRepo->getUrl("Creditkey_B2BGateway::images/ck-logo-new.svg"),
                     'quoteId' => $this->_cart->getQuote()->getId(),
                     'redirectUrl' => $this->getMerchantEndpoint(),
                     'publicKey' => $this->getPublicKey(),
