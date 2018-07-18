@@ -96,6 +96,7 @@ define(
               var payload = {
                 first_name: billingData.firstname,
                 last_name: billingData.lastname,
+                company_name: billingData.company,
                 address1: billingData.street[0],
                 address2: billingData.street[1],
                 city: billingData.city,
