@@ -16,6 +16,11 @@
       \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfigInterface,
       \Magento\Sales\Model\Order $modelOrder,
       \Magento\Checkout\Model\Cart $modelCart,
+      \Magento\Quote\Api\CartManagementInterface $cartManagement,
+      \Magento\Quote\Model\QuoteManagement $quoteManagement,
+      \Magento\Store\Model\StoreManagerInterface $storeManager,
+      \Magento\Customer\Model\CustomerFactory $customerFactory,
+      \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
       \Psr\Log\LoggerInterface $logger
     ) {
       parent::__construct(
@@ -29,6 +34,11 @@
         $scopeConfigInterface,
         $modelOrder,
         $modelCart,
+        $cartManagement,
+        $quoteManagement,
+        $storeManager,
+        $customerFactory,
+        $customerRepository,
         $logger
       );
     }
@@ -58,11 +68,29 @@
           return $this;
       }
 
-      $quoteId = $this->_getQuote()->getId();
-      $orderId = $this->_checkoutSession->getLastRealOrderId();
-      $order = $this->_modelOrder->loadByIncrementId($orderId);
+      $quote = $this->_checkoutSession->getQuote();
+
+      $this->_checkoutSession
+        ->setLastQuoteId($quote->getId())
+        ->setLastSuccessQuoteId($quote->getId())
+        ->clearHelperData();
+
+      $email = $quote->getBillingAddress()->getEmail();
+
+      if (!$this->_customerSession->isLoggedIn()) {
+        $quote->setCheckoutMethod('guest');
+        $quote->setCustomerIsGuest(true);
+        $quote->setCustomerEmail($email);
+      }
+
+      $order = $this->_quoteManagement->submit($quote);
 
       if ($order) {
+        $this->_checkoutSession
+          ->setLastOrderId($order->getId())
+          ->setLastRealOrderId($order->getIncrementId())
+          ->setLastOrderStatus($order->getStatus());
+
         $order->setState(\Magento\Sales\Model\Order::STATE_PROCESSING, true);
         $order->setStatus(\Magento\Sales\Model\Order::STATE_PROCESSING);
         $order->save();
@@ -77,7 +105,11 @@
       $cart = $this->_modelCart;
       $cart->truncate();
       $cart->save();
-      $cart->getItems()->clear()->save();
+      $items = $quote->getAllVisibleItems();
+      foreach($items as $item) {
+        $itemId = $item->getItemId();
+        $cart->removeItem($itemId)->save();
+      }
       $this->_redirect('checkout/onepage/success');
       return $this;
     }

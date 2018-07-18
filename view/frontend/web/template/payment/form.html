@@ -31,11 +31,11 @@
                 <button class="action primary checkout"
                         type="submit"
                         data-bind="
-                        click: placeOrder,
+                        click: redirectToPayment,
                         css: {disabled: !isPlaceOrderActionAllowed()},
-                        attr: {title: $t('Place Order')}
+                        attr: {title: $t('Next')}
                         ">
-                    <span data-bind="i18n: 'Place Order'"></span>
+                    <span data-bind="i18n: 'Next'"></span>
                 </button>
             </div>
         </div>

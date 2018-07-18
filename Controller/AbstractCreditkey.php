@@ -21,6 +21,11 @@ abstract class AbstractCreditkey extends AppAction implements RedirectLoginInter
     protected $_configScopeConfigInterface;
     protected $_modelOrder;
     protected $_modelCart;
+    protected $_cartManagement;
+    protected $_quoteManagement;
+    protected $_storeManager;
+    protected $_customerFactory;
+    protected $_customerRepo;
     protected $_logger;
 
     public function __construct(
@@ -34,6 +39,11 @@ abstract class AbstractCreditkey extends AppAction implements RedirectLoginInter
       \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfigInterface,
       \Magento\Sales\Model\Order $modelOrder,
       \Magento\Checkout\Model\Cart $modelCart,
+      \Magento\Quote\Api\CartManagementInterface $cartManagement,
+      \Magento\Quote\Model\QuoteManagement $quoteManagement,
+      \Magento\Store\Model\StoreManagerInterface $storeManager,
+      \Magento\Customer\Model\CustomerFactory $customerFactory,
+      \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
       \Psr\Log\LoggerInterface $logger
     ) {
       $this->_customerSession = $customerSession;
@@ -45,6 +55,11 @@ abstract class AbstractCreditkey extends AppAction implements RedirectLoginInter
       $this->_configScopeConfigInterface = $scopeConfigInterface;
       $this->_modelOrder = $modelOrder;
       $this->_modelCart = $modelCart;
+      $this->_cartManagement = $cartManagement;
+      $this->_quoteManagement = $quoteManagement;
+      $this->_storeManager = $storeManager;
+      $this->_customerFactory = $customerFactory;
+      $this->_customerRepo = $customerRepository;
       $this->_logger = $logger;
       parent::__construct($context);
     }
