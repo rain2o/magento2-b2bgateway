@@ -11,9 +11,13 @@ define(
       'Magento_Checkout/js/action/place-order',
       'Magento_Checkout/js/action/select-payment-method',
       'Magento_Checkout/js/checkout-data',
-      'Magento_Checkout/js/model/payment/additional-validators'
+      'Magento_Checkout/js/model/payment/additional-validators',
+      'Magento_Checkout/js/action/set-payment-information',
+      'Magento_Checkout/js/model/quote',
+      'Magento_SalesRule/js/model/payment/discount-messages'
+
     ],
-    function ($, Component, placeOrderAction, selectPaymentMethodAction, checkoutData, additionalValidators) {
+    function ($, Component, placeOrderAction, selectPaymentMethodAction, checkoutData, additionalValidators, setPaymentInformation, quote, messageContainer) {
         'use strict';
 
         return Component.extend({
@@ -41,47 +45,12 @@ define(
               }
             },
 
-            redirectAfterPlaceOrder: false,
-            placeOrder: function(data, event) {
-              if (event) {
-                event.preventDefault();
-              }
-
-              var loginForm = $('.form-login').validation();
-              var ignore = null;
-
-              // run both form validations
-              if (!loginForm.validation('isValid')) {
-                return false;
-              }
-
-              var self = this,
-                placeOrder;
-
-              if (this.validate() && additionalValidators.validate()) {
-                this.isPlaceOrderActionAllowed(false);
-                placeOrder = placeOrderAction(this.getData(), false, this.messageContainer);
-
-                $.when(placeOrder)
-                  .fail(function() {
-                    self.isPlaceOrderActionAllowed(true);
-                  }).done(this.afterPlaceOrder.bind(this));
-                return true;
-              }
-              return false;
-            },
-
-            selectPaymentMethod: function() {
-              selectPaymentMethodAction(this.getData());
-              checkoutData.setSelectedPaymentMethod(this.item.method);
-              return true;
-            },
-
-            afterPlaceOrder: function() {
+            redirectToPayment: function() {
               var data = window.checkoutConfig.payment.creditkey_gateway;
               var items = window.checkoutConfig.quoteItemData;
               var billingData = checkoutData.getBillingAddressFromData();
               var returnParams = '?ref=' + data.quoteId + '&key=%CKKEY%&secure=true';
+              var email = checkoutData.getInputFieldEmailValue();
 
               items = items.map(function(i) {
                 return {
@@ -92,6 +61,10 @@ define(
                   sku: i.sku
                 }
               });
+
+              if (!email || email === '') {
+                email = window.checkoutConfig.customerData.email;
+              }
 
               var payload = {
                 first_name: billingData.firstname,
@@ -107,11 +80,20 @@ define(
                 return_url: data.returnUrl + returnParams,
                 cancel_url: data.cancelUrl + returnParams,
                 merchant: data.publicKey,
-                email: checkoutData.getInputFieldEmailValue(),
+                email: email,
                 cart_items: JSON.stringify(items)
               };
 
-              window.location = data.redirectUrl + $.param(payload); 
+              setPaymentInformation(messageContainer, { method: quote.paymentMethod().method })
+                .then(res => window.location = data.redirectUrl + $.param(payload));
+            },
+
+            redirectAfterPlaceOrder: false,
+
+            selectPaymentMethod: function() {
+              selectPaymentMethodAction(this.getData());
+              checkoutData.setSelectedPaymentMethod(this.item.method);
+              return true;
             }
         });
     }
