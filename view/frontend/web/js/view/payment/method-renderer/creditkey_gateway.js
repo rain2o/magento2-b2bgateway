@@ -84,6 +84,8 @@ define(
                 cart_items: JSON.stringify(items)
               };
 
+              heap.track('Magento Redirect to Credit Key', { data: payload });
+              
               setPaymentInformation(messageContainer, { method: quote.paymentMethod().method })
                 .then(res => window.location = data.redirectUrl + $.param(payload));
             },
@@ -91,6 +93,8 @@ define(
             redirectAfterPlaceOrder: false,
 
             selectPaymentMethod: function() {
+              heap.track('Magento Payment Selection', { data: this.getData() });
+
               selectPaymentMethodAction(this.getData());
               checkoutData.setSelectedPaymentMethod(this.item.method);
               return true;
