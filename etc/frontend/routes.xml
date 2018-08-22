@@ -3,7 +3,7 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
     <router id="standard">
         <route id="payment" frontName="creditkey_gateway">
-            <module name="Creditkey_B2BGateway" />
+            <module name="CreditKey_B2BGateway" />
         </route>
     </router>
 </config>

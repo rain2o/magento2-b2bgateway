@@ -1,5 +1,5 @@
 <?php
-namespace Creditkey\B2BGateway\Gateway\Command;
+namespace CreditKey\B2BGateway\Gateway\Command;
 
 use Magento\Payment\Gateway\Command;
 use Magento\Payment\Gateway\Command\CommandException;
@@ -8,13 +8,13 @@ use \Psr\Log\LoggerInterface;
 
 class AuthorizeCommand implements CommandInterface
 {
-  protected $logger;
+  protected $_logger;
 
-  public function __construct(
-    LoggerInterface $logger
-  ) {
-    $this->logger = $logger;
-  }
+    public function __construct(
+        LoggerInterface $logger
+    ) {
+        $this->_logger = $logger;
+    }
 
     /**
      * Executes command basing on business object
@@ -27,7 +27,8 @@ class AuthorizeCommand implements CommandInterface
       $paymentDO = $commandSubject['payment'];
       $payment = $paymentDO->getPayment();
 
-      $payment->setTransactionId(md5(mt_rand(0, 1000)));
+      $this->_logger->debug('Authorizing Credit Key Payment: '.$payment->getId());
+
       $payment->setIsTransactionClosed(false);
 
       return null;

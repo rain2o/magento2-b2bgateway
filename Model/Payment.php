@@ -1,5 +1,5 @@
 <?php
-namespace Creditkey\B2BGateway\Model;
+namespace CreditKey\B2BGateway\Model;
 
 use Magento\Payment\Model\InfoInterface;
 use Magento\Payment\Gateway\Command\CommandPoolInterface;
@@ -33,15 +33,13 @@ class Payment extends AbstractMethod implements \Magento\Payment\Model\MethodInt
       return $this;
     }
 
-    public function capture(InfoInterface $payment, $amount) {
-      //todo add functionality later
-      $this->logger->debug('captured!');
-    }
+    // public function capture(InfoInterface $payment, $amount) {
+    //   $this->logger->debug('captured!');
+    // }
  
-    public function authorize(InfoInterface $payment, $amount) {
-      //todo add functionality later
-      $this->logger->debug('authorized!');
-    }
+    // public function authorize(InfoInterface $payment, $amount) {
+    //   $this->logger->debug('authorized!');
+    // }
 
 		/**
      * {@inheritdoc}

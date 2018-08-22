@@ -1,13 +1,9 @@
 <?php
-/**
- * Copyright © 2016 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
-namespace Creditkey\B2BGateway\Block;
+namespace CreditKey\B2BGateway\Block;
 
 use Magento\Framework\Phrase;
 use Magento\Payment\Block\ConfigurableInfo;
-use Creditkey\B2BGateway\Gateway\Response\FraudHandler;
+use CreditKey\B2BGateway\Gateway\Response\FraudHandler;
 
 class Info extends ConfigurableInfo
 {

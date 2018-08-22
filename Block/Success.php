@@ -1,5 +1,5 @@
 <?php
-namespace Creditkey\B2BGateway\Block;
+namespace CreditKey\B2BGateway\Block;
 
 class Success  extends \Magento\Framework\View\Element\Template
 {

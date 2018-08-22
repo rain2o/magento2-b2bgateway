@@ -1,5 +1,5 @@
 <?php
-namespace Creditkey\B2BGateway\Gateway\Command;
+namespace CreditKey\B2BGateway\Gateway\Command;
 
 use Magento\Payment\Gateway\Command;
 use Magento\Payment\Gateway\Command\CommandException;
