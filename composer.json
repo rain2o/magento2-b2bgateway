@@ -25,6 +25,6 @@
     },
     "repositories": [{
         "type": "composer",
-        "url": "http://composer.creditkey.com"
+        "url": "https://composer.creditkey.com"
     }]
 }
