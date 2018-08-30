@@ -12,11 +12,7 @@
         "creditkey/creditkey-php": "*"
     },
     "type": "magento2-module",
-    "version": "0.9.0",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
-    ],
+    "version": "0.9.1",
     "autoload": {
         "files": [ "registration.php" ],
         "psr-4": {
