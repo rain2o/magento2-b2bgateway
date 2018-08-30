@@ -1,9 +1,5 @@
 <?php
-/**
- * Copyright © 2016 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
-namespace Creditkey\B2BGateway\Model\Ui;
+namespace CreditKey\B2BGateway\Model\Ui;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -46,23 +42,12 @@ final class ConfigProvider implements ConfigProviderInterface
         return [
             'payment' => [
                 self::CODE => [
-                    'assetSrc' => $this->_assetRepo->getUrl("Creditkey_B2BGateway::images/ck-logo-new.svg"),
+                    'assetSrc' => $this->_assetRepo->getUrl("CreditKey_B2BGateway::images/ck-logo-new.svg"),
                     'quoteId' => $this->_cart->getQuote()->getId(),
-                    'redirectUrl' => $this->getMerchantEndpoint(),
-                    'publicKey' => $this->getPublicKey(),
                     'baseUrl' => $this->_urlBuilder->getUrl(),
-                    'returnUrl' => $this->_urlBuilder->getUrl('creditkey_gateway/order/complete'),
-                    'cancelUrl'=> $this->_urlBuilder->getUrl('creditkey_gateway/order/cancel')
+                    'redirectUrl' => $this->_urlBuilder->getUrl('creditkey_gateway/order/create')
                 ]
             ]
         ];
-    }
-
-    public function getMerchantEndpoint() {
-      return $this->_configScopeConfigInterface->getValue('payment/creditkey_gateway/creditkey_endpoint', ScopeInterface::SCOPE_STORE) . '/api/credit_apps/fullpage_checkout?';
-    }
-
-    public function getPublicKey() {
-      return $this->_configScopeConfigInterface->getValue('payment/creditkey_gateway/creditkey_publickey', ScopeInterface::SCOPE_STORE);
     }
 }

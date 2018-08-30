@@ -1,116 +1,61 @@
 <?xml version="1.0"?>
-<!--
-/**
- * Copyright © 2016 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
--->
 
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <!-- Payment Method Facade configuration -->
-    <virtualType name="Creditkey\B2BGateway\Model\PaymentMethodFacade" type="Magento\Payment\Model\Method\Adapter">
+    <virtualType name="CreditKey\B2BGateway\Model\PaymentMethodFacade" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
-            <argument name="code" xsi:type="const">\Creditkey\B2BGateway\Model\Ui\ConfigProvider::CODE</argument>
+            <argument name="code" xsi:type="const">\CreditKey\B2BGateway\Model\Ui\ConfigProvider::CODE</argument>
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
-            <argument name="infoBlockType" xsi:type="string">Creditkey\B2BGateway\Block\Info</argument>
-            <argument name="valueHandlerPool" xsi:type="object">CreditkeyB2BGatewayValueHandlerPool</argument>
-            <argument name="commandPool" xsi:type="object">Creditkey\B2BGateway\Gateway\Command\CommandPool</argument>
+            <argument name="infoBlockType" xsi:type="string">CreditKey\B2BGateway\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">CreditKeyB2BGatewayValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">CreditKey\B2BGateway\Gateway\Command\CommandPool</argument>
         </arguments>
     </virtualType>
 
     <!-- Configuration reader -->
-    <virtualType name="CreditkeyB2BGatewayConfig" type="Magento\Payment\Gateway\Config\Config">
+    <virtualType name="CreditKeyB2BGatewayConfig" type="Magento\Payment\Gateway\Config\Config">
         <arguments>
-            <argument name="methodCode" xsi:type="const">\Creditkey\B2BGateway\Model\Ui\ConfigProvider::CODE</argument>
+            <argument name="methodCode" xsi:type="const">\CreditKey\B2BGateway\Model\Ui\ConfigProvider::CODE</argument>
         </arguments>
     </virtualType>
 
-    <!-- Logger, initialized with CreditkeyB2BGatewayConfig -->
-    <virtualType name="CreditkeyB2BGatewayLogger" type="Magento\Payment\Model\Method\Logger">
+    <!-- Logger, initialized with CreditKeyB2BGatewayConfig -->
+    <virtualType name="CreditKeyB2BGatewayLogger" type="Magento\Payment\Model\Method\Logger">
         <arguments>
-            <argument name="config" xsi:type="object">CreditkeyB2BGatewayConfig</argument>
+            <argument name="config" xsi:type="object">CreditKeyB2BGatewayConfig</argument>
         </arguments>
     </virtualType>
 
     <!-- Commands infrastructure -->
-    <virtualType name="Creditkey\B2BGateway\Gateway\Command\CommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+    <virtualType name="CreditKey\B2BGateway\Gateway\Command\CommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="initialize" xsi:type="string">Creditkey\B2BGateway\Gateway\Command\InitializeCommand</item>
-                <item name="authorize" xsi:type="string">Creditkey\B2BGateway\Gateway\Command\AuthorizeCommand</item>
-                <item name="capture" xsi:type="string">CreditkeyB2BGatewayCaptureCommand</item>
-                <item name="void" xsi:type="string">CreditkeyB2BGatewayVoidCommand</item>
-                <item name="refund" xsi:type="string">CreditkeyB2BGatewayRefundCommand</item>
+                <item name="initialize" xsi:type="string">CreditKey\B2BGateway\Gateway\Command\InitializeCommand</item>
+                <item name="authorize" xsi:type="string">CreditKey\B2BGateway\Gateway\Command\AuthorizeCommand</item>
+                <item name="capture" xsi:type="string">CreditKey\B2BGateway\Gateway\Command\CaptureCommand</item>
+                <item name="void" xsi:type="string">CreditKey\B2BGateway\Gateway\Command\VoidCommand</item>
+                <item name="refund" xsi:type="string">CreditKey\B2BGateway\Gateway\Command\RefundCommand</item>
             </argument>
         </arguments>
     </virtualType>
-
-    <!-- Capture command -->
-    <virtualType name="CreditkeyB2BGatewayCaptureCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
-        <arguments>
-            <argument name="requestBuilder" xsi:type="object">Creditkey\B2BGateway\Gateway\Request\CaptureRequest</argument>
-            <argument name="handler" xsi:type="object">Creditkey\B2BGateway\Gateway\Response\CaptureHandler</argument>
-            <argument name="transferFactory" xsi:type="object">Creditkey\B2BGateway\Gateway\Http\TransferFactory</argument>
-            <argument name="client" xsi:type="object">Creditkey\B2BGateway\Gateway\Http\Client\CurlClient</argument>
-        </arguments>
-    </virtualType>
-
-    <!-- Capture Request -->
-    <type name="Creditkey\B2BGateway\Gateway\Request\CaptureRequest">
-        <arguments>
-            <argument name="config" xsi:type="object">CreditkeyB2BGatewayConfig</argument>
-        </arguments>
-    </type>
-
-    <!-- Void command -->
-    <virtualType name="CreditkeyB2BGatewayVoidCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
-        <arguments>
-            <argument name="requestBuilder" xsi:type="object">Creditkey\B2BGateway\Gateway\Request\VoidRequest</argument>
-            <argument name="transferFactory" xsi:type="object">Creditkey\B2BGateway\Gateway\Http\TransferFactory</argument>
-            <argument name="client" xsi:type="object">Creditkey\B2BGateway\Gateway\Http\Client\CurlClient</argument>
-        </arguments>
-    </virtualType>
-
-    <!-- Void Request -->
-    <type name="Creditkey\B2BGateway\Gateway\Request\VoidRequest">
-        <arguments>
-            <argument name="config" xsi:type="object">CreditkeyB2BGatewayConfig</argument>
-        </arguments>
-    </type>
-
-    <!-- Refund command -->
-    <virtualType name="CreditkeyB2BGatewayRefundCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
-        <arguments>
-            <argument name="requestBuilder" xsi:type="object">Creditkey\B2BGateway\Gateway\Request\RefundRequest</argument>
-            <argument name="transferFactory" xsi:type="object">Creditkey\B2BGateway\Gateway\Http\TransferFactory</argument>
-            <argument name="client" xsi:type="object">Creditkey\B2BGateway\Gateway\Http\Client\CurlClient</argument>
-        </arguments>
-    </virtualType>
-
-    <!-- Void Request -->
-    <type name="Creditkey\B2BGateway\Gateway\Request\RefundRequest">
-        <arguments>
-            <argument name="config" xsi:type="object">CreditkeyB2BGatewayConfig</argument>
-        </arguments>
-    </type>
 
     <!-- Value handlers infrastructure -->
-    <virtualType name="CreditkeyB2BGatewayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+    <virtualType name="CreditKeyB2BGatewayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
-                <item name="default" xsi:type="string">CreditkeyB2BGatewayConfigValueHandler</item>
+                <item name="default" xsi:type="string">CreditKeyB2BGatewayConfigValueHandler</item>
             </argument>
         </arguments>
     </virtualType>
-    <virtualType name="CreditkeyB2BGatewayConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+    <virtualType name="CreditKeyB2BGatewayConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
         <arguments>
-            <argument name="configInterface" xsi:type="object">CreditkeyB2BGatewayConfig</argument>
+            <argument name="configInterface" xsi:type="object">CreditKeyB2BGatewayConfig</argument>
         </arguments>
     </virtualType>
 
-    <type name="Creditkey\B2BGateway\Block\Info">
+    <type name="CreditKey\B2BGateway\Block\Info">
         <arguments>
-            <argument name="config" xsi:type="object">CreditkeyB2BGatewayConfig</argument>
+            <argument name="config" xsi:type="object">CreditKeyB2BGatewayConfig</argument>
         </arguments>
     </type>
 

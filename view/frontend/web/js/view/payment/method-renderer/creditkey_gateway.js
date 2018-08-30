@@ -1,7 +1,3 @@
-/**
- * Copyright © 2016 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
 /*browser:true*/
 /*global define*/
 define(
@@ -22,7 +18,7 @@ define(
 
         return Component.extend({
             defaults: {
-                template: 'Creditkey_B2BGateway/payment/form',
+                template: 'CreditKey_B2BGateway/payment/form',
                 transactionResult: ''
             },
 
@@ -35,11 +31,9 @@ define(
             },
 
             getData: function() {
-              var customData = window.checkoutConfig.payment.creditkey_gateway;
               return {
                 'method': this.item.method,
                 'additional_data': {
-                  'ck_public_key': customData.publicKey,
                   'transaction-result': ''
                 }
               }
@@ -47,47 +41,11 @@ define(
 
             redirectToPayment: function() {
               var data = window.checkoutConfig.payment.creditkey_gateway;
-              var items = window.checkoutConfig.quoteItemData;
-              var billingData = checkoutData.getBillingAddressFromData();
-              var returnParams = '?ref=' + data.quoteId + '&key=%CKKEY%&secure=true';
-              var email = checkoutData.getInputFieldEmailValue();
 
-              items = items.map(function(i) {
-                return {
-                  merchant_id: i.store_id,
-                  name: i.name,
-                  price: i.price,
-                  quantity: i.qty,
-                  sku: i.sku
-                }
-              });
-
-              if (!email || email === '') {
-                email = window.checkoutConfig.customerData.email;
-              }
-
-              var payload = {
-                first_name: billingData.firstname,
-                last_name: billingData.lastname,
-                company_name: billingData.company,
-                address1: billingData.street[0],
-                address2: billingData.street[1],
-                city: billingData.city,
-                state: billingData.region,
-                zip: billingData.postcode,
-                phone: billingData.telephone,
-                amount: window.checkoutConfig.totalsData.subtotal,
-                return_url: data.returnUrl + returnParams,
-                cancel_url: data.cancelUrl + returnParams,
-                merchant: data.publicKey,
-                email: email,
-                cart_items: JSON.stringify(items)
-              };
-
-              heap.track('Magento Redirect to Credit Key', { data: payload });
+              heap.track('Magento Redirect to Credit Key', { data: data.redirectUrl });
               
               setPaymentInformation(messageContainer, { method: quote.paymentMethod().method })
-                .then(res => window.location = data.redirectUrl + $.param(payload));
+                .then(res => window.location = data.redirectUrl);
             },
 
             redirectAfterPlaceOrder: false,

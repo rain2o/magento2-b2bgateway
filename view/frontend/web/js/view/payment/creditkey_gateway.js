@@ -1,7 +1,3 @@
-/**
- * Copyright © 2016 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
 /*browser:true*/
 /*global define*/
 define(
@@ -17,7 +13,7 @@ define(
         rendererList.push(
             {
                 type: 'creditkey_gateway',
-                component: 'Creditkey_B2BGateway/js/view/payment/method-renderer/creditkey_gateway'
+                component: 'CreditKey_B2BGateway/js/view/payment/method-renderer/creditkey_gateway'
             }
         );
         /** Add view logic here if needed */
