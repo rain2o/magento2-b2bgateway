@@ -12,7 +12,7 @@
         "creditkey/creditkey-php": "*"
     },
     "type": "magento2-module",
-    "version": "0.9.1",
+    "version": "0.9.2",
     "autoload": {
         "files": [ "registration.php" ],
         "psr-4": {

@@ -1,7 +1,7 @@
 <?php
   namespace CreditKey\B2BGateway\Controller\Order;
 
-  class Cancel extends \CreditKey\B2BGateway\Controller\AbstractCreditKey {
+  class Cancel extends \CreditKey\B2BGateway\Controller\AbstractCreditKeyController {
       public function __construct(
           \Magento\Framework\App\Action\Context $context,
           \CreditKey\B2BGateway\Helper\Api $creditKeyApi,

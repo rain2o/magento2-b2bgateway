@@ -5,7 +5,7 @@
     use Magento\Framework\App\Action\Action as AppAction;
     use Magento\Store\Model\ScopeInterface;
 
-    abstract class AbstractCreditKey extends AppAction implements RedirectLoginInterface
+    abstract class AbstractCreditKeyController extends AppAction implements RedirectLoginInterface
     {
         protected $_creditKeyApi;
         protected $_creditKeyData;

@@ -43,7 +43,7 @@
         }
 
         /**
-         * Return a \CreditKey\Models\Charges objects from a Quote object
+         * Return a \CreditKey\Models\Charges objects from a Quote or Order object
          * @return \CreditKey\Models\Charges
          */
         public function buildCharges($holder)
@@ -52,6 +52,10 @@
             return $this->buildChargesWithUpdatedGrandTotal($holder, $grandTotal);
         }
 
+        /**
+         * Return a \CreditKey\Models\Charges objects from a Quote or Order object, but with an updated grand total amount.
+         * @return \CreditKey\Models\Charges
+         */
         public function buildChargesWithUpdatedGrandTotal($holder, $updatedGrandTotal)
         {
             $total = (float)$holder->getSubtotal();

@@ -3,7 +3,7 @@
 
     use Magento\Framework\Controller\ResultFactory;
 
-    class Create extends \CreditKey\B2BGateway\Controller\AbstractCreditKey
+    class Create extends \CreditKey\B2BGateway\Controller\AbstractCreditKeyController
     {
         protected $_urlBuilder;
         protected $_resultFactory;

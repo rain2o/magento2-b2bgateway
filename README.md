@@ -11,8 +11,8 @@ From your root Magento directory, run the following commands:
 
 Then enable the module with the following commands:
 ```
-php bin/magento module:enable CreditKey_B2BGateway
-php bin/magento setup:upgrade
+% php bin/magento module:enable CreditKey_B2BGateway
+% php bin/magento setup:upgrade
 ```
 
 ## Configuration

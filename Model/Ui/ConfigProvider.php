@@ -1,35 +1,34 @@
 <?php
 namespace CreditKey\B2BGateway\Model\Ui;
 
-use Magento\Checkout\Model\ConfigProviderInterface;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Store\Model\ScopeInterface;
-use Magento\Framework\UrlInterface;
-use Magento\Checkout\Model\Cart;
-use Magento\Framework\View\Asset\Repository;
-
 /**
  * Class ConfigProvider
  */
-final class ConfigProvider implements ConfigProviderInterface
+final class ConfigProvider implements \Magento\Checkout\Model\ConfigProviderInterface
 {
     const CODE = 'creditkey_gateway';
 
-    protected $cart;
-    protected $urlBuilder;
-    protected $_configScopeConfigInterface;
+    protected $_cart;
     protected $_assetRepo;
+    protected $_customerSession;
+    protected $_urlBuilder;
+    protected $_creditKeyApi;
+    protected $_creditKeyData;
 
     public function __construct(
-      Cart $cart,
-      UrlInterface $urlBuilder,
-      ScopeConfigInterface $configScopeConfigInterface,
-      Repository $_assetRepo
+        \Magento\Checkout\Model\Cart $cart,
+        \Magento\Framework\View\Asset\Repository $assetRepo,
+        \Magento\Customer\Model\Session $customerSession,
+        \Magento\Framework\UrlInterface $urlBuilder,
+        \CreditKey\B2BGateway\Helper\Api $creditKeyApi,
+        \CreditKey\B2BGateway\Helper\Data $creditKeyData
     ) {
-      $this->_cart = $cart;
-      $this->_urlBuilder = $urlBuilder;
-      $this->_configScopeConfigInterface = $configScopeConfigInterface;
-      $this->_assetRepo = $_assetRepo;
+        $this->_cart = $cart;
+        $this->_assetRepo = $assetRepo;
+        $this->_customerSession = $customerSession;
+        $this->_urlBuilder = $urlBuilder;
+        $this->_creditKeyApi = $creditKeyApi;
+        $this->_creditKeyData = $creditKeyData;
     }
 
     /**
@@ -39,13 +38,30 @@ final class ConfigProvider implements ConfigProviderInterface
      */
     public function getConfig()
     {
+        $quote = $this->_cart->getQuote();
+        $cartContents = $this->_creditKeyData->buildCartContents($quote);
+        $customerId = null;
+        if ($this->_customerSession->isLoggedIn())
+            $customerId = $this->_customerSession->getCustomer()->getId();
+
+        $this->_creditKeyApi->configure();
+        $isCreditKeyDisplayed = false;
+        try
+        {
+            $isCreditKeyDisplayed = \CreditKey\Checkout::isDisplayedInCheckout($cartContents, $customerId);
+        }
+        catch (Exception $e)
+        {
+            /* swallow any exception, and don't display the CK option */
+        }
+
         return [
             'payment' => [
                 self::CODE => [
                     'assetSrc' => $this->_assetRepo->getUrl("CreditKey_B2BGateway::images/ck-logo-new.svg"),
-                    'quoteId' => $this->_cart->getQuote()->getId(),
-                    'baseUrl' => $this->_urlBuilder->getUrl(),
-                    'redirectUrl' => $this->_urlBuilder->getUrl('creditkey_gateway/order/create')
+                    // 'quoteId' => $this->_cart->getQuote()->getId(),
+                    'redirectUrl' => $this->_urlBuilder->getUrl('creditkey_gateway/order/create'),
+                    'isCreditKeyDisplayed' => $isCreditKeyDisplayed
                 ]
             ]
         ];

@@ -38,7 +38,12 @@ define(
                 }
               }
             },
-
+            
+            isDisplayed: function() {
+              var data = window.checkoutConfig.payment.creditkey_gateway;
+              return data.isCreditKeyDisplayed;
+            },
+            
             redirectToPayment: function() {
               var data = window.checkoutConfig.payment.creditkey_gateway;
 

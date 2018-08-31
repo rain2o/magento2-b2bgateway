@@ -1,7 +1,7 @@
 <?php
     namespace CreditKey\B2BGateway\Controller\Order;
 
-    class Complete extends \CreditKey\B2BGateway\Controller\AbstractCreditKey
+    class Complete extends \CreditKey\B2BGateway\Controller\AbstractCreditKeyController
     {
         protected $_quoteManagement;
         protected $_modelCart;
