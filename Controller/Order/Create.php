@@ -15,6 +15,7 @@
             \Magento\Customer\Model\Url $customerUrl,
             \Magento\Checkout\Model\Session $checkoutSession,
             \Magento\Customer\Model\Session $customerSession,
+            \Magento\Framework\Message\ManagerInterface $messageManager,
             \Psr\Log\LoggerInterface $logger,
             \Magento\Framework\UrlInterface $urlBuilder,
             \Magento\Framework\Controller\ResultFactory $resultFactory
@@ -29,6 +30,7 @@
                 $customerUrl,
                 $checkoutSession,
                 $customerSession,
+                $messageManager,
                 $logger
             );
         }
@@ -47,18 +49,29 @@
                 $customerId = $this->_customerSession->getCustomer()->getId();
 
             $returnUrl = $this->_urlBuilder->getUrl('creditkey_gateway/order/complete', [
-              'ref' => $remoteId,
-              'key' => '%CKKEY%',
-              '_secure' => true
+                'ref' => $remoteId,
+                'key' => '%CKKEY%',
+                '_secure' => true
             ]);
             $cancelUrl = $this->_urlBuilder->getUrl('creditkey_gateway/order/cancel');
 
             $this->_creditKeyApi->configure();
-            $redirectTo = \CreditKey\Checkout::beginCheckout($cartContents, $billingAddress, $shippingAddress,
-                $charges, $remoteId, $customerId, $returnUrl, $cancelUrl);
 
-            $resultRedirect = $this->_resultFactory->create(ResultFactory::TYPE_REDIRECT);
-            $resultRedirect->setUrl($redirectTo);
-            return $resultRedirect;
+            try
+            {
+                $redirectTo = \CreditKey\Checkout::beginCheckout($cartContents, $billingAddress, $shippingAddress,
+                    $charges, $remoteId, $customerId, $returnUrl, $cancelUrl);
+
+                $resultRedirect = $this->_resultFactory->create(ResultFactory::TYPE_REDIRECT);
+                $resultRedirect->setUrl($redirectTo);
+                return $resultRedirect;
+            }
+            catch (\Exception $e)
+            {
+                $this->_logger->critical($e);
+                $this->_messageManager->addErrorMessage(__('CREDIT_KEY_UNAVAILABLE'));
+                $this->_redirect('checkout');
+                return $this;
+            }
         }
     }

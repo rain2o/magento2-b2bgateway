@@ -14,6 +14,7 @@ final class ConfigProvider implements \Magento\Checkout\Model\ConfigProviderInte
     protected $_urlBuilder;
     protected $_creditKeyApi;
     protected $_creditKeyData;
+    protected $_logger;
 
     public function __construct(
         \Magento\Checkout\Model\Cart $cart,
@@ -21,7 +22,8 @@ final class ConfigProvider implements \Magento\Checkout\Model\ConfigProviderInte
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Framework\UrlInterface $urlBuilder,
         \CreditKey\B2BGateway\Helper\Api $creditKeyApi,
-        \CreditKey\B2BGateway\Helper\Data $creditKeyData
+        \CreditKey\B2BGateway\Helper\Data $creditKeyData,
+        \Psr\Log\LoggerInterface $logger
     ) {
         $this->_cart = $cart;
         $this->_assetRepo = $assetRepo;
@@ -29,6 +31,7 @@ final class ConfigProvider implements \Magento\Checkout\Model\ConfigProviderInte
         $this->_urlBuilder = $urlBuilder;
         $this->_creditKeyApi = $creditKeyApi;
         $this->_creditKeyData = $creditKeyData;
+        $this->_logger = $logger;
     }
 
     /**
@@ -50,8 +53,9 @@ final class ConfigProvider implements \Magento\Checkout\Model\ConfigProviderInte
         {
             $isCreditKeyDisplayed = \CreditKey\Checkout::isDisplayedInCheckout($cartContents, $customerId);
         }
-        catch (Exception $e)
+        catch (\Exception $e)
         {
+            $this->_logger->critical($e);
             /* swallow any exception, and don't display the CK option */
         }
 
@@ -59,7 +63,6 @@ final class ConfigProvider implements \Magento\Checkout\Model\ConfigProviderInte
             'payment' => [
                 self::CODE => [
                     'assetSrc' => $this->_assetRepo->getUrl("CreditKey_B2BGateway::images/ck-logo-new.svg"),
-                    // 'quoteId' => $this->_cart->getQuote()->getId(),
                     'redirectUrl' => $this->_urlBuilder->getUrl('creditkey_gateway/order/create'),
                     'isCreditKeyDisplayed' => $isCreditKeyDisplayed
                 ]

@@ -12,6 +12,7 @@
         protected $_customerUrl;
         protected $_checkoutSession;
         protected $_customerSession;
+        protected $_messageManager;
         protected $_logger;
 
         public function __construct(
@@ -21,6 +22,7 @@
             \Magento\Customer\Model\Url $customerUrl,
             \Magento\Checkout\Model\Session $checkoutSession,
             \Magento\Customer\Model\Session $customerSession,
+            \Magento\Framework\Message\ManagerInterface $messageManager,
             \Psr\Log\LoggerInterface $logger
         ) {
             $this->_creditKeyApi = $creditKeyApi;
@@ -28,6 +30,7 @@
             $this->_customerUrl = $customerUrl;
             $this->_checkoutSession = $checkoutSession;
             $this->_customerSession = $customerSession;
+            $this->_messageManager = $messageManager;
             $this->_logger = $logger;
             parent::__construct($context);
         }
