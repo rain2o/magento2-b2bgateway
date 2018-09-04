@@ -1,7 +1,7 @@
 <?php
     namespace CreditKey\B2BGateway\Controller\Order;
 
-    class Complete extends \CreditKey\B2BGateway\Controller\AbstractCreditKey
+    class Complete extends \CreditKey\B2BGateway\Controller\AbstractCreditKeyController
     {
         protected $_quoteManagement;
         protected $_modelCart;
@@ -13,6 +13,7 @@
             \Magento\Customer\Model\Url $customerUrl,
             \Magento\Checkout\Model\Session $checkoutSession,
             \Magento\Customer\Model\Session $customerSession,
+            \Magento\Framework\Message\ManagerInterface $messageManager,
             \Psr\Log\LoggerInterface $logger,
             \Magento\Quote\Model\QuoteManagement $quoteManagement,
             \Magento\Checkout\Model\Cart $modelCart
@@ -27,6 +28,7 @@
                 $customerUrl,
                 $checkoutSession,
                 $customerSession,
+                $messageManager,
                 $logger
             );
         }
@@ -47,7 +49,18 @@
 
           // Check that the payment is authorized
           $this->_creditKeyApi->configure();
-          $isAuthorized = \CreditKey\Checkout::completeCheckout($ckOrderId);
+          $isAuthorized = false;
+          try
+          {
+              $isAuthorized = \CreditKey\Checkout::completeCheckout($ckOrderId);
+          }
+          catch (\Exception $e)
+          {
+                $this->_logger->critical($e);
+                $this->_messageManager->addErrorMessage(__('CREDIT_KEY_AUTH_FAILED'));
+                $this->_redirect('checkout');
+                return $this;
+          }
 
           if (!$isAuthorized)
           {
@@ -87,8 +100,15 @@
               $orderPayment->setState('paid');
               $order->save();
 
-              // Send the Magento Order ID and Status to Credit Key
-              \CreditKey\Orders::update($ckOrderId, $order->getState(), $order->getId(), null, null, null);
+              try
+              {
+                  // Send the Magento Order ID and Status to Credit Key
+                  \CreditKey\Orders::update($ckOrderId, $order->getState(), $order->getId(), null, null, null);
+              }
+              catch (\Exception $e)
+              {
+                  $this->_logger->critical($e);
+              }
           }
 
           $cart = $this->_modelCart;
