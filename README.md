@@ -2,10 +2,9 @@
 
 ## Installation
 
-From your root Magento directory, run the following commands:
+From your root Magento directory, run the following command:
 
 ```
-% composer config repositories.creditkey composer https://composer.creditkey.com
 % composer require creditkey/b2bgateway
 ```
 
