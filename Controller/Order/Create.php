@@ -18,10 +18,12 @@
             \Magento\Framework\Message\ManagerInterface $messageManager,
             \Psr\Log\LoggerInterface $logger,
             \Magento\Framework\UrlInterface $urlBuilder,
-            \Magento\Framework\Controller\ResultFactory $resultFactory
+            \Magento\Framework\Controller\ResultFactory $resultFactory,
+            \Magento\Framework\App\Request\Http $request
         ) {
             $this->_urlBuilder = $urlBuilder;
             $this->_resultFactory = $resultFactory;
+            $this->request = $request;
 
             parent::__construct(
                 $context,
@@ -57,10 +59,15 @@
 
             $this->_creditKeyApi->configure();
 
+            $mode = 'redirect';
+            if ($this->request->getParam('modal')) {
+              $mode = 'modal';
+            }
+
             try
             {
                 $redirectTo = \CreditKey\Checkout::beginCheckout($cartContents, $billingAddress, $shippingAddress,
-                    $charges, $remoteId, $customerId, $returnUrl, $cancelUrl);
+                    $charges, $remoteId, $customerId, $returnUrl, $cancelUrl, $mode);
 
                 $resultRedirect = $this->_resultFactory->create(ResultFactory::TYPE_REDIRECT);
                 $resultRedirect->setUrl($redirectTo);

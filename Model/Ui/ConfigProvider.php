@@ -64,6 +64,7 @@ final class ConfigProvider implements \Magento\Checkout\Model\ConfigProviderInte
                 self::CODE => [
                     'assetSrc' => $this->_assetRepo->getUrl("CreditKey_B2BGateway::images/ck-logo-new.svg"),
                     'redirectUrl' => $this->_urlBuilder->getUrl('creditkey_gateway/order/create'),
+                    'publicKey' => $this->_creditKeyApi->public_key(),
                     'isCreditKeyDisplayed' => $isCreditKeyDisplayed
                 ]
             ]
