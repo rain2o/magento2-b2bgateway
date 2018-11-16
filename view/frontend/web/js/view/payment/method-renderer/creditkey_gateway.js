@@ -10,11 +10,15 @@ define(
       'Magento_Checkout/js/model/payment/additional-validators',
       'Magento_Checkout/js/action/set-payment-information',
       'Magento_Checkout/js/model/quote',
-      'Magento_SalesRule/js/model/payment/discount-messages'
-
+      'Magento_SalesRule/js/model/payment/discount-messages',
+      'creditkeysdk'
     ],
-    function ($, Component, placeOrderAction, selectPaymentMethodAction, checkoutData, additionalValidators, setPaymentInformation, quote, messageContainer) {
+    function ($, Component, placeOrderAction, selectPaymentMethodAction, checkoutData, additionalValidators, setPaymentInformation, quote, messageContainer, creditKey) {
         'use strict';
+
+        /*var data = window.checkoutConfig.payment.creditkey_gateway;*/
+        //var ckClient = new creditKey.Client(data.publicKey, 'development');
+        /*ckClient.is_displayed_in_checkout();*/
 
         return Component.extend({
             defaults: {
@@ -50,7 +54,8 @@ define(
               heap.track('Magento Redirect to Credit Key', { data: data.redirectUrl });
               
               setPaymentInformation(messageContainer, { method: quote.paymentMethod().method })
-                .then(res => window.location = data.redirectUrl);
+                .then(res => creditKey.checkout(data.redirectUrl, 'modal'));
+                //.then(res => window.location = data.redirectUrl);
             },
 
             redirectAfterPlaceOrder: false,

@@ -1,6 +1,6 @@
 {
     "name": "creditkey/b2bgateway",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Credit Key integration with payment gateway",
     "require": {
         "php": "~7.0.13|~7.1.0",

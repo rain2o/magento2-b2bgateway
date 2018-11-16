@@ -20,4 +20,9 @@
             $sharedSecret = $this->_configScopeConfigInterface->getValue('payment/creditkey_gateway/creditkey_sharedsecret', ScopeInterface::SCOPE_STORE);
             \CreditKey\Api::configure($endpoint, $publicKey, $sharedSecret);
         }
+
+        public function public_key() 
+        {
+          return $this->_configScopeConfigInterface->getValue('payment/creditkey_gateway/creditkey_publickey', ScopeInterface::SCOPE_STORE);
+        }
     }
