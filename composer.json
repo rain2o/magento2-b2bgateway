@@ -1,6 +1,6 @@
 {
     "name": "creditkey/b2bgateway",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Credit Key integration with payment gateway",
     "require": {
         "php": "~7.0.13|~7.1.0",
@@ -10,7 +10,7 @@
         "magento/framework": "101.0.*",
         "magento/magento-composer-installer": "*",
         "composer/installers": "*",
-        "creditkey/creditkey-php": "*"
+        "creditkey/creditkey-php": ">=1.0.3"
     },
     "type": "magento2-module",
     "autoload": {
