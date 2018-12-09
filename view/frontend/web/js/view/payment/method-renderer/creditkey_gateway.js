@@ -54,8 +54,9 @@ define(
               heap.track('Magento Redirect to Credit Key', { data: data.redirectUrl });
               
               setPaymentInformation(messageContainer, { method: quote.paymentMethod().method })
-                .then(res => creditKey.checkout(data.redirectUrl, 'modal'));
-                //.then(res => window.location = data.redirectUrl);
+                .then(function () {
+                  creditKey.checkout(data.redirectUrl, 'modal')
+                });
             },
 
             redirectAfterPlaceOrder: false,

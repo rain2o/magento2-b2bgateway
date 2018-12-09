@@ -1,5 +1,5 @@
 /*!
- * creditkey-js v1.0.1 - https://www.creditkey.com
+ * creditkey-js v1.0.3 - https://www.creditkey.com
  * MIT Licensed
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -86,7 +86,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 var api = function api(platform) {
-  if (platform === 'development') return 'http://localhost:9100';
+  if (platform === 'development') return 'http://dev:9100';
   if (platform === 'staging') return 'https://staging.creditkey.com/app';
   if (platform === 'production') return 'https://www.creditkey.com/app';
 };
@@ -17593,8 +17593,8 @@ function validate_url(url) {
 }
 
 window.addEventListener('message', function (e) {
-  event = JSON.parse(e.data);
-  var modal_element = document.getElementById('modal-card');
+  var event = JSON.parse(e.data),
+      modal_element = document.getElementById('modal-card');
 
   // if we're closing the modal from within the CK iframe, trigger the event bound to parent body
   if (event.action === 'cancel' && event.type === 'modal') {
@@ -17622,7 +17622,7 @@ var modal_main = "bottom: 0;\n                           left: 0;\n             
 
 var modal_background = "bottom: 0;\n                                  left: 0;\n                                  position: absolute;\n                                  right: 0;\n                                  top: 0;\n                                  background-color: rgba(10, 10, 10, 0.86); }";
 
-var modal_card = "margin: 0 20px;\n                            height: 820px;\n                            overflow: auto;\n                            position: relative;\n                            width: 600px;\n                            display: -webkit-box;\n                            display: -ms-flexbox;\n                            display: flex;\n                            border-radius: 5px;\n                            -webkit-box-orient: vertical;\n                            -webkit-box-direction: normal;\n                                -ms-flex-direction: column;\n                                    flex-direction: column;\n                            background-color: white;\n                            -ms-overflow-y: visible;";
+var modal_card = "margin: 0 20px;\n                            height: 820px;\n                            overflow: auto;\n                            position: relative;\n                            width: 600px;\n                            max-height: 95vh;\n                            display: -webkit-box;\n                            display: -ms-flexbox;\n                            display: flex;\n                            border-radius: 5px;\n                            -webkit-box-orient: vertical;\n                            -webkit-box-direction: normal;\n                                -ms-flex-direction: column;\n                                    flex-direction: column;\n                            background-color: white;\n                            -ms-overflow-y: visible;";
 
 var modal_head = "-webkit-box-align: center;\n                                 -ms-flex-align: center;\n                                     align-items: center;\n                             background-color: white;\n                             display: -webkit-box;\n                             display: -ms-flexbox;\n                             display: flex;\n                             -ms-flex-negative: 0;\n                                 flex-shrink: 0;\n                             -webkit-box-pack: start;\n                                 -ms-flex-pack: start;\n                                     justify-content: center;\n                             padding: 20px;\n                             position: relative;\n                             border-bottom: 1px solid #dbdbdb;\n                             border-top-left-radius: 6px;\n                             border-top-right-radius: 6px;";
 
