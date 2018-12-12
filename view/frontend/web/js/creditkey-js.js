@@ -17565,17 +17565,13 @@ var modal = function modal(source) {
     iframe = 'An invalid resource was requested';
   }
 
-  body.addEventListener('click', function (e) {
-    return remove();
-  });
+  //body.addEventListener('click', e => remove());
   return body.insertAdjacentHTML('beforeend', '<div id="creditkey-modal" style="' + __WEBPACK_IMPORTED_MODULE_0__styles_modal__["c" /* modal_main */] + '"><div style="' + __WEBPACK_IMPORTED_MODULE_0__styles_modal__["a" /* modal_background */] + '"></div><div id="modal-card" style="' + __WEBPACK_IMPORTED_MODULE_0__styles_modal__["b" /* modal_card */] + '">' + iframe + '</div></div>');
 };
 
 function remove() {
   var el = document.querySelector('#creditkey-modal');
-  el && document.body.removeEventListener('click', function (e) {
-    return remove;
-  });
+  //el && document.body.removeEventListener('click', e => remove);
   el && el.remove();
 }
 
