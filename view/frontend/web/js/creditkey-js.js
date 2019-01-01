@@ -1,5 +1,5 @@
 /*!
- * creditkey-js v1.0.3 - https://www.creditkey.com
+ * creditkey-js v1.0.12 - https://www.creditkey.com
  * MIT Licensed
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -93,33 +93,131 @@ var api = function api(platform) {
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-module.exports = __webpack_require__(2);
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__styles_modal__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_platform__ = __webpack_require__(0);
 
+
+
+var modal = function modal(source) {
+  // Check to see if we've already created the modal - but hidden it when the user clicked off.
+  // If so, simply redisplay the modal.
+  var existingModal = document.getElementById('creditkey-modal');
+
+  if (existingModal !== null) {
+    existingModal.style.display = 'flex';
+  } else {
+    // Otherwise, create the modal.
+
+    var body = document.body;
+    var style = 'margin: auto; width: 100%; border: none; height: 820px;';
+    var iframe = '<iframe id="creditkey-iframe" src="' + (source + '?modal=true') + '" style="' + style + '"></iframe>';
+
+    if (!validate_url(source)) {
+      iframe = 'An invalid resource was requested';
+    }
+
+    //body.addEventListener('click', e => remove());
+    return body.insertAdjacentHTML('beforeend', '<div id="creditkey-modal" style="' + __WEBPACK_IMPORTED_MODULE_0__styles_modal__["c" /* modal_main */] + '"><div style="' + __WEBPACK_IMPORTED_MODULE_0__styles_modal__["a" /* modal_background */] + '"></div><div id="modal-card" style="' + __WEBPACK_IMPORTED_MODULE_0__styles_modal__["b" /* modal_card */] + '">' + iframe + '</div></div>');
+  }
+};
+
+function remove() {
+  // Hide the modal so we can potentially redisplay it, leaving the user at the same place in the
+  // checkout flow, if they accidentially click off.
+  var el = document.getElementById('creditkey-modal');
+  if (el !== null) {
+    el.style.display = 'none';
+  }
+}
+
+// ensure that we're requesting a valid creditkey domain
+function validate_url(url) {
+  if (!url) return false;
+
+  var root = url.split('/')[1];
+
+  if (Object(__WEBPACK_IMPORTED_MODULE_1__utils_platform__["a" /* api */])('development').split('/')[1] === root) return true;
+  if (Object(__WEBPACK_IMPORTED_MODULE_1__utils_platform__["a" /* api */])('staging').split('/')[1] === root) return true;
+  if (Object(__WEBPACK_IMPORTED_MODULE_1__utils_platform__["a" /* api */])('production').split('/')[1] === root) return true;
+
+  return false;
+}
+
+window.addEventListener('message', function (e) {
+  if (!e) return false;
+  if (e && !e.data) return false;
+
+  var event = void 0;
+
+  try {
+    event = JSON.parse(e.data);
+  } catch (e) {
+    event = false;
+  }
+
+  if (!event || !event.action) return false;
+
+  var modal_element = document.getElementById('modal-card');
+
+  // if we're closing the modal from within the CK iframe, trigger the event bound to parent body
+  if (event.action === 'cancel' && event.type === 'modal') {
+    remove();
+  } else if (event.action == 'complete' && event.type == 'modal') {
+    window.location.href = event.options;
+  } else if (event.action == 'height' && event.type == 'modal') {
+    var total_height = 180 + event.options;
+    modal_element.style.height = total_height.toString() + 'px';
+  }
+}, false);
+
+/* harmony default export */ __webpack_exports__["a"] = (modal);
 
 /***/ }),
 /* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+var redirect = function redirect(source) {
+  return window.location.href = source;
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (redirect);
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(4);
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__lib_client__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_checkout__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__lib_client__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_checkout__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lib_apply__ = __webpack_require__(13);
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Client", function() { return __WEBPACK_IMPORTED_MODULE_0__lib_client__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "apply", function() { return __WEBPACK_IMPORTED_MODULE_2__lib_apply__["a"]; });
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "checkout", function() { return __WEBPACK_IMPORTED_MODULE_1__lib_checkout__["a"]; });
 
 
 
 
 
+
 /***/ }),
-/* 3 */
+/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Client; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_network__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_network__ = __webpack_require__(6);
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -209,13 +307,13 @@ var Client = function () {
 
 
 /***/ }),
-/* 4 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__request__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__request__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_lodash__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_lodash__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_lodash__);
 
 
@@ -319,7 +417,7 @@ var Network = function Network(platform, resource) {
 /* harmony default export */ __webpack_exports__["a"] = (Network);
 
 /***/ }),
-/* 5 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -349,7 +447,7 @@ function request(url, options) {
 }
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -17461,10 +17559,10 @@ function request(url, options) {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7), __webpack_require__(8)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(10)(module)))
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, exports) {
 
 var g;
@@ -17491,7 +17589,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -17519,12 +17617,12 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modal__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__redirect__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modal__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__redirect__ = __webpack_require__(2);
 
 
 
@@ -17547,66 +17645,7 @@ var checkout = function checkout(source) {
 /* harmony default export */ __webpack_exports__["a"] = (checkout);
 
 /***/ }),
-/* 10 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__styles_modal__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_platform__ = __webpack_require__(0);
-
-
-
-var modal = function modal(source) {
-  var body = document.body;
-  var style = 'margin: auto; width: 100%; border: none; height: 820px;';
-  var iframe = '<iframe id="creditkey-iframe" src="' + (source + '?modal=true') + '" style="' + style + '"></iframe>';
-
-  if (!validate_url(source)) {
-    iframe = 'An invalid resource was requested';
-  }
-
-  //body.addEventListener('click', e => remove());
-  return body.insertAdjacentHTML('beforeend', '<div id="creditkey-modal" style="' + __WEBPACK_IMPORTED_MODULE_0__styles_modal__["c" /* modal_main */] + '"><div style="' + __WEBPACK_IMPORTED_MODULE_0__styles_modal__["a" /* modal_background */] + '"></div><div id="modal-card" style="' + __WEBPACK_IMPORTED_MODULE_0__styles_modal__["b" /* modal_card */] + '">' + iframe + '</div></div>');
-};
-
-function remove() {
-  var el = document.querySelector('#creditkey-modal');
-  //el && document.body.removeEventListener('click', e => remove);
-  el && el.remove();
-}
-
-// ensure that we're requesting a valid creditkey domain
-function validate_url(url) {
-  if (!url) return false;
-
-  var root = url.split('/')[1];
-
-  if (Object(__WEBPACK_IMPORTED_MODULE_1__utils_platform__["a" /* api */])('development').split('/')[1] === root) return true;
-  if (Object(__WEBPACK_IMPORTED_MODULE_1__utils_platform__["a" /* api */])('staging').split('/')[1] === root) return true;
-  if (Object(__WEBPACK_IMPORTED_MODULE_1__utils_platform__["a" /* api */])('production').split('/')[1] === root) return true;
-
-  return false;
-}
-
-window.addEventListener('message', function (e) {
-  var event = JSON.parse(e.data),
-      modal_element = document.getElementById('modal-card');
-
-  // if we're closing the modal from within the CK iframe, trigger the event bound to parent body
-  if (event.action === 'cancel' && event.type === 'modal') {
-    remove();
-  } else if (event.action == 'complete' && event.type == 'modal') {
-    window.location.href = event.options;
-  } else if (event.action == 'height' && event.type == 'modal') {
-    var total_height = 180 + event.options;
-    modal_element.style.height = total_height.toString() + 'px';
-  }
-}, false);
-
-/* harmony default export */ __webpack_exports__["a"] = (modal);
-
-/***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -17614,7 +17653,7 @@ window.addEventListener('message', function (e) {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return modal_background; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return modal_card; });
 /* unused harmony export modal_head */
-var modal_main = "bottom: 0;\n                           left: 0;\n                           position: absolute;\n                           right: 0;\n                           top: 0;\n                           -webkit-box-align: center;\n                                 -ms-flex-align: center;\n                                     align-items: center;\n                           display: none;\n                           -webkit-box-orient: vertical;\n                           -webkit-box-direction: normal;\n                               -ms-flex-direction: column;:%\n                                   flex-direction: column;\n                           -webkit-box-pack: center;\n                               -ms-flex-pack: center;\n                                   justify-content: center;\n                           overflow: hidden;\n                           position: fixed;\n                           z-index: 40;\n                           display: -webkit-box;\n                           display: -ms-flexbox;\n                           display: flex;";
+var modal_main = "bottom: 0;\n                           left: 0;\n                           position: absolute;\n                           right: 0;\n                           top: 0;\n                           -webkit-box-align: center;\n                                 -ms-flex-align: center;\n                                     align-items: center;\n                           display: none;\n                           -webkit-box-orient: vertical;\n                           -webkit-box-direction: normal;\n                               -ms-flex-direction: column;:%\n                                   flex-direction: column;\n                           -webkit-box-pack: center;\n                               -ms-flex-pack: center;\n                                   justify-content: center;\n                           overflow: hidden;\n                           position: fixed;\n                           z-index: 500000;\n                           display: -webkit-box;\n                           display: -ms-flexbox;\n                           display: flex;";
 
 var modal_background = "bottom: 0;\n                                  left: 0;\n                                  position: absolute;\n                                  right: 0;\n                                  top: 0;\n                                  background-color: rgba(10, 10, 10, 0.86); }";
 
@@ -17623,15 +17662,38 @@ var modal_card = "margin: 0 20px;\n                            height: 820px;\n 
 var modal_head = "-webkit-box-align: center;\n                                 -ms-flex-align: center;\n                                     align-items: center;\n                             background-color: white;\n                             display: -webkit-box;\n                             display: -ms-flexbox;\n                             display: flex;\n                             -ms-flex-negative: 0;\n                                 flex-shrink: 0;\n                             -webkit-box-pack: start;\n                                 -ms-flex-pack: start;\n                                     justify-content: center;\n                             padding: 20px;\n                             position: relative;\n                             border-bottom: 1px solid #dbdbdb;\n                             border-top-left-radius: 6px;\n                             border-top-right-radius: 6px;";
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-var redirect = function redirect(source) {
-  return window.location.href = source;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modal__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__redirect__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_platform__ = __webpack_require__(0);
+
+
+
+
+var width = window.screen.availWidth;
+
+var apply = function apply(key) {
+  var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'modal';
+  var platform = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'production';
+
+  if (!key) {
+    throw new Error('API public key required.');
+  }
+
+  // always use redirect for small devices
+  if (width <= 479) return Object(__WEBPACK_IMPORTED_MODULE_1__redirect__["a" /* default */])(source);
+
+  if (type.toLowerCase() === 'modal') {
+    return Object(__WEBPACK_IMPORTED_MODULE_0__modal__["a" /* default */])(Object(__WEBPACK_IMPORTED_MODULE_2__utils_platform__["a" /* api */])(platform) + '/apply/modal/start/' + key);
+  } else if (type.toLowerCase() === 'redirect') {
+    return Object(__WEBPACK_IMPORTED_MODULE_1__redirect__["a" /* default */])(Object(__WEBPACK_IMPORTED_MODULE_2__utils_platform__["a" /* api */])(platform) + '/apply/start/' + key);
+  }
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (redirect);
+/* harmony default export */ __webpack_exports__["a"] = (apply);
 
 /***/ })
 /******/ ]);
