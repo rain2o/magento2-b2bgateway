@@ -60,7 +60,9 @@
         public function buildChargesWithUpdatedGrandTotal($holder, $updatedGrandTotal)
         {
             $total = (float)$holder->getSubtotal();
-            $shippingAmount = (float)$holder->getShippingAddress()->getShippingAmount();
+            $shippingAmount = $holder->getShippingAddress() == null
+                ? (float)0
+                : (float)$holder->getShippingAddress()->getShippingAmount();
             $tax = (float)$holder->getTaxAmount();
             $discount = $holder->getSubtotal() - $holder->getSubtotalWithDiscount();
             return new \CreditKey\Models\Charges($total, $shippingAmount, $tax, $discount, $updatedGrandTotal);
