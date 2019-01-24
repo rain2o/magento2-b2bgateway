@@ -1,5 +1,5 @@
 /*!
- * creditkey-js v1.0.15 - https://www.creditkey.com
+ * creditkey-js v1.0.18 - https://www.creditkey.com
  * MIT Licensed
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -123,7 +123,7 @@ var modal = function modal(source) {
     }
 
     //body.addEventListener('click', e => remove());
-    return body.insertAdjacentHTML('beforeend', '<div id="creditkey-modal" style="' + __WEBPACK_IMPORTED_MODULE_0__styles_modal__["d" /* modal_main */] + '"><div style="' + __WEBPACK_IMPORTED_MODULE_0__styles_modal__["a" /* modal_background */] + '"></div><div id="modal-card" style="' + (width <= 479 ? __WEBPACK_IMPORTED_MODULE_0__styles_modal__["c" /* modal_card_mobile */] : __WEBPACK_IMPORTED_MODULE_0__styles_modal__["b" /* modal_card */]) + '">' + iframe + '</div></div>');
+    return body.insertAdjacentHTML('beforeend', '<div id="creditkey-modal" style="' + __WEBPACK_IMPORTED_MODULE_0__styles_modal__["c" /* modal_main */] + '"><div style="' + __WEBPACK_IMPORTED_MODULE_0__styles_modal__["a" /* modal_background */] + '"></div><div id="modal-card" style="' + __WEBPACK_IMPORTED_MODULE_0__styles_modal__["b" /* modal_card */] + '">' + iframe + '</div></div>');
   }
 };
 
@@ -17795,12 +17795,12 @@ var checkout = function checkout(source) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return modal_main; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return modal_main; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return modal_background; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return modal_card; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return modal_card_mobile; });
+/* unused harmony export modal_card_mobile */
 /* unused harmony export modal_head */
-var modal_main = "bottom: 0;\n                           left: 0;\n                           position: absolute;\n                           right: 0;\n                           top: 0;\n                           -webkit-box-align: center;\n                                 -ms-flex-align: center;\n                                     align-items: center;\n                           display: none;\n                           -webkit-box-orient: vertical;\n                           -webkit-box-direction: normal;\n                               -ms-flex-direction: column;:%\n                                   flex-direction: column;\n                           -webkit-box-pack: center;\n                               -ms-flex-pack: center;\n                                   justify-content: center;\n                           overflow: hidden;\n                           position: fixed;\n                           z-index: 500000;\n                           display: -webkit-box;\n                           display: -ms-flexbox;\n                           display: flex;";
+var modal_main = "bottom: 0;\n                           left: 0;\n                           position: fixed;\n                           right: 0;\n                           top: 0;\n                           -webkit-box-align: center;\n                                 -ms-flex-align: center;\n                                     align-items: center;\n                           display: none;\n                           -webkit-box-orient: vertical;\n                           -webkit-box-direction: normal;\n                               -ms-flex-direction: column;:%\n                                   flex-direction: column;\n                           -webkit-box-pack: center;\n                               -ms-flex-pack: center;\n                                   justify-content: center;\n                           overflow: hidden;\n                           position: fixed;\n                           z-index: 500000;\n                           display: -webkit-box;\n                           display: -ms-flexbox;\n                           display: flex;";
 
 var modal_background = "bottom: 0;\n                                  left: 0;\n                                  position: absolute;\n                                  right: 0;\n                                  top: 0;\n                                  background-color: rgba(10, 10, 10, 0.86); }";
 
