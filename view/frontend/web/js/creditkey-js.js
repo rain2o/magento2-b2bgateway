@@ -1,5 +1,5 @@
 /*!
- * creditkey-js v1.0.12 - https://www.creditkey.com
+ * creditkey-js v1.0.15 - https://www.creditkey.com
  * MIT Licensed
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -89,6 +89,7 @@ var api = function api(platform) {
   if (platform === 'development') return 'http://localhost:9100';
   if (platform === 'staging') return 'https://staging.creditkey.com/app';
   if (platform === 'production') return 'https://www.creditkey.com/app';
+  return platform; // custom URL - for testing
 };
 
 /***/ }),
@@ -96,10 +97,12 @@ var api = function api(platform) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__styles_modal__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__styles_modal__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_platform__ = __webpack_require__(0);
 
 
+
+var width = window.screen.availWidth;
 
 var modal = function modal(source) {
   // Check to see if we've already created the modal - but hidden it when the user clicked off.
@@ -120,7 +123,7 @@ var modal = function modal(source) {
     }
 
     //body.addEventListener('click', e => remove());
-    return body.insertAdjacentHTML('beforeend', '<div id="creditkey-modal" style="' + __WEBPACK_IMPORTED_MODULE_0__styles_modal__["c" /* modal_main */] + '"><div style="' + __WEBPACK_IMPORTED_MODULE_0__styles_modal__["a" /* modal_background */] + '"></div><div id="modal-card" style="' + __WEBPACK_IMPORTED_MODULE_0__styles_modal__["b" /* modal_card */] + '">' + iframe + '</div></div>');
+    return body.insertAdjacentHTML('beforeend', '<div id="creditkey-modal" style="' + __WEBPACK_IMPORTED_MODULE_0__styles_modal__["d" /* modal_main */] + '"><div style="' + __WEBPACK_IMPORTED_MODULE_0__styles_modal__["a" /* modal_background */] + '"></div><div id="modal-card" style="' + (width <= 479 ? __WEBPACK_IMPORTED_MODULE_0__styles_modal__["c" /* modal_card_mobile */] : __WEBPACK_IMPORTED_MODULE_0__styles_modal__["b" /* modal_card */]) + '">' + iframe + '</div></div>');
   }
 };
 
@@ -146,6 +149,10 @@ function validate_url(url) {
   return false;
 }
 
+function redirect(uri) {
+  if (navigator.userAgent.match(/Android/i)) document.location = uri;else window.location.replace(uri);
+}
+
 window.addEventListener('message', function (e) {
   if (!e) return false;
   if (e && !e.data) return false;
@@ -166,7 +173,7 @@ window.addEventListener('message', function (e) {
   if (event.action === 'cancel' && event.type === 'modal') {
     remove();
   } else if (event.action == 'complete' && event.type == 'modal') {
-    window.location.href = event.options;
+    redirect(event.options);
   } else if (event.action == 'height' && event.type == 'modal') {
     var total_height = 180 + event.options;
     modal_element.style.height = total_height.toString() + 'px';
@@ -200,11 +207,20 @@ module.exports = __webpack_require__(4);
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__lib_client__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_checkout__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lib_apply__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_cart_item__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lib_address__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__lib_charges__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__lib_checkout__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__lib_apply__ = __webpack_require__(16);
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Client", function() { return __WEBPACK_IMPORTED_MODULE_0__lib_client__["a"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "apply", function() { return __WEBPACK_IMPORTED_MODULE_2__lib_apply__["a"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "checkout", function() { return __WEBPACK_IMPORTED_MODULE_1__lib_checkout__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "CartItem", function() { return __WEBPACK_IMPORTED_MODULE_1__lib_cart_item__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Address", function() { return __WEBPACK_IMPORTED_MODULE_2__lib_address__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Charges", function() { return __WEBPACK_IMPORTED_MODULE_3__lib_charges__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "apply", function() { return __WEBPACK_IMPORTED_MODULE_5__lib_apply__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "checkout", function() { return __WEBPACK_IMPORTED_MODULE_4__lib_checkout__["a"]; });
+
+
+
 
 
 
@@ -236,7 +252,7 @@ var Client = function () {
     this.network = Object(__WEBPACK_IMPORTED_MODULE_0__utils_network__["a" /* default */])(platform);
   }
 
-  Client.prototype.begin_checkout = function begin_checkout(cartItems, billingAddress, shippingAddress, charges, remoteId, customerId, returnUrl, cancelUrl, mode) {
+  Client.prototype.begin_checkout = function begin_checkout(cartItems, billingAddress, shippingAddress, charges, remoteId, customerId, returnUrl, cancelUrl, mode, merchant_data) {
     var _this = this;
 
     return new Promise(function (resolve, reject) {
@@ -258,22 +274,23 @@ var Client = function () {
 
       if ((typeof charges === 'undefined' ? 'undefined' : _typeof(charges)) !== 'object') {
         return reject('charges should be a charges object');
-      } else if (charges.filter(function (c) {
-        return !c.validate_charges();
-      }).length >= 1) {
-        return reject('one or more charges value is invalid');
+      } else if (!charges.validate_charges()) {
+        return reject('charges value is invalid');
       }
 
-      return _this.network.post('ecomm/begin_checkout', {
-        cart_items: cartItems,
-        shipping_address: shippingAddress,
-        billing_address: billingAddress,
-        charges: charges,
+      return _this.network.post('ecomm/begin_checkout' + _this.key_param, {
+        cart_items: cartItems.map(function (item) {
+          return item.data;
+        }),
+        shipping_address: shippingAddress.data,
+        billing_address: billingAddress.data,
+        charges: charges.data,
         remote_id: remoteId,
         remote_customer_id: customerId,
         return_url: returnUrl,
         cancel_url: cancelUrl,
-        mode: mode || 'modal'
+        mode: mode || 'modal',
+        merchant_data: merchant_data
       }).then(function (res) {
         return resolve(res);
       }).catch(function (err) {
@@ -282,11 +299,23 @@ var Client = function () {
     });
   };
 
-  Client.prototype.is_displayed_in_checkout = function is_displayed_in_checkout() {
+  Client.prototype.is_displayed_in_checkout = function is_displayed_in_checkout(cartItems) {
     var _this2 = this;
 
     return new Promise(function (resolve, reject) {
-      return _this2.network.post('ecomm/is_displayed_in_checkout' + _this2.key_param).then(function (res) {
+      if (!Array.isArray(cartItems)) {
+        return reject('cart items must be an array of CartItem objects');
+      } else if (cartItems.filter(function (c) {
+        return !c.is_valid_item();
+      }).length >= 1) {
+        return reject('one or more cart items are invalid');
+      }
+
+      return _this2.network.post('ecomm/is_displayed_in_checkout' + _this2.key_param, {
+        cart_items: cartItems.map(function (item) {
+          return item.data;
+        })
+      }).then(function (res) {
         return res['is_displayed_in_checkout'] ? resolve(true) : reject(false);
       }).catch(function (err) {
         return reject(err);
@@ -17621,6 +17650,123 @@ module.exports = function(module) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CartItem; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var CartItem = function () {
+  function CartItem(merchantProductId, name, price, sku, quantity, size, color) {
+    _classCallCheck(this, CartItem);
+
+    this.data = {
+      merchant_id: merchantProductId,
+      name: name,
+      price: price,
+      sku: sku,
+      quantity: quantity,
+      size: size,
+      color: color
+    };
+  }
+
+  CartItem.prototype.is_valid_item = function is_valid_item() {
+    return !!(this.data.merchant_id && this.data.name && this.data.price);
+  };
+
+  return CartItem;
+}();
+
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Address; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Address = function () {
+  function Address(first_name, last_name, company_name, email, address1, address2, city, state, zip) {
+    _classCallCheck(this, Address);
+
+    this.data = {
+      first_name: first_name,
+      last_name: last_name,
+      company_name: company_name,
+      email: email,
+      address1: address1,
+      address2: address2 || '',
+      city: city,
+      state: state,
+      zip: zip
+    };
+  }
+
+  Address.prototype.is_valid_address = function is_valid_address() {
+    for (var p in this.data) {
+      if ((!this.data[p] || this.data[p] === '') && p !== 'address2') {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  return Address;
+}();
+
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Charges; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Charges = function () {
+  function Charges(total, shipping, tax, discount_amount, grand_total) {
+    _classCallCheck(this, Charges);
+
+    this.data = {
+      total: total,
+      shipping: shipping,
+      tax: tax,
+      discount_amount: discount_amount,
+      grand_total: grand_total
+    };
+  }
+
+  Charges.prototype.validate_charges = function validate_charges() {
+    if (this.data.shipping && !this.is_valid_money_value(this.data.shipping)) return false;
+    if (this.data.tax && !this.is_valid_money_value(this.data.tax)) return false;
+    if (this.data.discount_amount && !this.is_valid_money_value(this.data.discount_amount)) return false;
+
+    if (!this.is_valid_money_value(this.data.total) || !this.is_valid_money_value(this.data.grand_total)) {
+      return false;
+    }
+
+    return true;
+  };
+
+  Charges.prototype.is_valid_money_value = function is_valid_money_value(value) {
+    var num = +value;
+    if (isNaN(num)) return false;
+
+    return true;
+  };
+
+  return Charges;
+}();
+
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modal__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__redirect__ = __webpack_require__(2);
 
@@ -17633,7 +17779,7 @@ var checkout = function checkout(source) {
   var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'modal';
 
   // always use redirect for small devices
-  if (width <= 479) return Object(__WEBPACK_IMPORTED_MODULE_1__redirect__["a" /* default */])(source);
+  //if (width <= 479) return redirect(source);
 
   if (type.toLowerCase() === 'modal') {
     return Object(__WEBPACK_IMPORTED_MODULE_0__modal__["a" /* default */])(source);
@@ -17645,13 +17791,14 @@ var checkout = function checkout(source) {
 /* harmony default export */ __webpack_exports__["a"] = (checkout);
 
 /***/ }),
-/* 12 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return modal_main; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return modal_main; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return modal_background; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return modal_card; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return modal_card_mobile; });
 /* unused harmony export modal_head */
 var modal_main = "bottom: 0;\n                           left: 0;\n                           position: absolute;\n                           right: 0;\n                           top: 0;\n                           -webkit-box-align: center;\n                                 -ms-flex-align: center;\n                                     align-items: center;\n                           display: none;\n                           -webkit-box-orient: vertical;\n                           -webkit-box-direction: normal;\n                               -ms-flex-direction: column;:%\n                                   flex-direction: column;\n                           -webkit-box-pack: center;\n                               -ms-flex-pack: center;\n                                   justify-content: center;\n                           overflow: hidden;\n                           position: fixed;\n                           z-index: 500000;\n                           display: -webkit-box;\n                           display: -ms-flexbox;\n                           display: flex;";
 
@@ -17659,10 +17806,12 @@ var modal_background = "bottom: 0;\n                                  left: 0;\n
 
 var modal_card = "margin: 0 20px;\n                            height: 820px;\n                            overflow: auto;\n                            position: relative;\n                            width: 600px;\n                            max-height: 95vh;\n                            display: -webkit-box;\n                            display: -ms-flexbox;\n                            display: flex;\n                            border-radius: 5px;\n                            -webkit-box-orient: vertical;\n                            -webkit-box-direction: normal;\n                                -ms-flex-direction: column;\n                                    flex-direction: column;\n                            background-color: white;\n                            -ms-overflow-y: visible;";
 
+var modal_card_mobile = "margin: 0;\n                                  height: 100vh;\n                                  max-height: 100vh;\n                                  overflow: auto;\n                                  position: relative;\n                                  width: 100vw;\n                                  display: -webkit-box;\n                                  display: -ms-flexbox;\n                                  display: flex;\n                                  -webkit-box-orient: vertical;\n                                  -webkit-box-direction: normal;\n                                      -ms-flex-direction: column;\n                                          flex-direction: column;\n                                  background-color: white;\n                                  -ms-overflow-y: visible;";
+
 var modal_head = "-webkit-box-align: center;\n                                 -ms-flex-align: center;\n                                     align-items: center;\n                             background-color: white;\n                             display: -webkit-box;\n                             display: -ms-flexbox;\n                             display: flex;\n                             -ms-flex-negative: 0;\n                                 flex-shrink: 0;\n                             -webkit-box-pack: start;\n                                 -ms-flex-pack: start;\n                                     justify-content: center;\n                             padding: 20px;\n                             position: relative;\n                             border-bottom: 1px solid #dbdbdb;\n                             border-top-left-radius: 6px;\n                             border-top-right-radius: 6px;";
 
 /***/ }),
-/* 13 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
