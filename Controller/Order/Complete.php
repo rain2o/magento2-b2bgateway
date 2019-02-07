@@ -1,6 +1,8 @@
 <?php
     namespace CreditKey\B2BGateway\Controller\Order;
 
+    use Magento\Framework\Controller\ResultFactory;
+
     class Complete extends \CreditKey\B2BGateway\Controller\AbstractCreditKeyController
     {
         protected $_quoteManagement;
@@ -15,10 +17,12 @@
             \Magento\Customer\Model\Session $customerSession,
             \Magento\Framework\Message\ManagerInterface $messageManager,
             \Psr\Log\LoggerInterface $logger,
+            \Magento\Framework\Controller\ResultFactory $resultFactory,
             \Magento\Quote\Model\QuoteManagement $quoteManagement,
             \Magento\Checkout\Model\Cart $modelCart
         ) {
             $this->_quoteManagement = $quoteManagement;
+            $this->_resultFactory = $resultFactory;
             $this->_modelCart = $modelCart;
 
             parent::__construct(
@@ -119,7 +123,9 @@
               $itemId = $item->getItemId();
               $cart->removeItem($itemId)->save();
           }
-          $this->_redirect('checkout/onepage/success');
-          return $this;
+
+          $resultRedirect = $this->_resultFactory->create(ResultFactory::TYPE_REDIRECT);
+          $resultRedirect->setPath('checkout/onepage/success');
+          return $resultRedirect;
       }
   }
