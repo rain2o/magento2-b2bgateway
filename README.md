@@ -17,3 +17,5 @@ Then enable the module with the following commands:
 ## Configuration
 
 From the Magento admin, navigate to ```Stores > Configuration > Sales > Payment Methods``` and scroll down to the ```Credit Key (Gateway)``` section.
+
+If `title` is left blank the module will request the active promotion text from the Credit Key API.

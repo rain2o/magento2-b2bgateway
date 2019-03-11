@@ -16,9 +16,8 @@ define(
     function ($, Component, placeOrderAction, selectPaymentMethodAction, checkoutData, additionalValidators, setPaymentInformation, quote, messageContainer, creditKey) {
         'use strict';
 
-        /*var data = window.checkoutConfig.payment.creditkey_gateway;*/
-        //var ckClient = new creditKey.Client(data.publicKey, 'development');
-        /*ckClient.is_displayed_in_checkout();*/
+        var data = window.checkoutConfig.payment.creditkey_gateway;
+        var ckClient = new creditKey.Client(data.publicKey, data.endpoint);
 
         return Component.extend({
             defaults: {
@@ -42,15 +41,25 @@ define(
                 }
               }
             },
+
+            getCustomTitle: function() {
+              if (this.getTitle() && this.getTitle().trim() !== '') return $('#ck-payment-title').html(staticTitle);
+
+              return ckClient.get_marketing_display()
+                .then(function(res) {
+                  $('#ck-payment-title').html(res.text);
+                });
+            },
             
             isDisplayed: function() {
               var data = window.checkoutConfig.payment.creditkey_gateway;
+              if (data.isCreditKeyDisplayed) {
+                this.getCustomTitle();
+              }
               return data.isCreditKeyDisplayed;
             },
             
             redirectToPayment: function() {
-              var data = window.checkoutConfig.payment.creditkey_gateway;
-
               heap.track('Magento Redirect to Credit Key', { data: data.redirectUrl });
               
               setPaymentInformation(messageContainer, { method: quote.paymentMethod().method })
