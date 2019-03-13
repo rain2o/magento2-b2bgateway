@@ -1,5 +1,5 @@
 /*!
- * creditkey-js v1.0.32 - https://www.creditkey.com
+ * creditkey-js v1.0.33 - https://www.creditkey.com
  * MIT Licensed
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -1581,6 +1581,20 @@ var client_Client = function () {
         return res['is_displayed_in_checkout'] ? resolve(true) : reject(false);
       }).catch(function (err) {
         return reject(err);
+      });
+    });
+  };
+
+  Client.prototype.get_marketing_display = function get_marketing_display() {
+    var _this3 = this;
+
+    var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "checkout";
+
+    return new Promise(function (resolve, reject) {
+      return _this3.network.post('ecomm/marketing' + _this3.key_param, { type: type }).then(function (res) {
+        return resolve(res);
+      }).catch(function (err) {
+        return reject(error);
       });
     });
   };
