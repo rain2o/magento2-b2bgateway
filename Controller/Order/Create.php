@@ -24,6 +24,7 @@
             $this->_urlBuilder = $urlBuilder;
             $this->_resultFactory = $resultFactory;
             $this->request = $request;
+            $this->_logger = $logger;
 
             parent::__construct(
                 $context,
