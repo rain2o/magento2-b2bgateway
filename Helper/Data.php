@@ -1,8 +1,18 @@
 <?php
     namespace CreditKey\B2BGateway\Helper;
 
+    use \Psr\Log\LoggerInterface;
+
     class Data
     {
+        protected $logger;
+
+        public function __construct(
+          LoggerInterface $logger
+        ) {
+          $this->logger = $logger;
+        }
+
         /**
          * Return a collection of \CreditKey\Models\CartItem objects from a Quote or Order object
          * @return \CreditKey\Models\CartItem[]
@@ -60,10 +70,25 @@
         public function buildChargesWithUpdatedGrandTotal($holder, $updatedGrandTotal)
         {
             $total = (float)$holder->getSubtotal();
+
             $shippingAmount = $holder->getShippingAddress() == null
                 ? (float)0
                 : (float)$holder->getShippingAddress()->getShippingAmount();
-            $tax = (float)$holder->getTaxAmount();
+
+            $tax = $holder->getBillingAddress()->getTaxAmount() == null
+              ? (float)0
+              : (float)$holder->getBillingAddress()->getTaxAmount();
+
+            if ($tax == 0) {
+              $tax = $holder->getShippingAddress()->getTaxAmount() == null
+                ? (float)0
+                : (float)$holder->getShippingAddress()->getTaxAmount();
+            }
+
+            if ($tax == 0) {
+              $tax = $holder->getTaxAmount();
+            }
+
             $discount = $holder->getSubtotal() - $holder->getSubtotalWithDiscount();
             return new \CreditKey\Models\Charges($total, $shippingAmount, $tax, $discount, $updatedGrandTotal);
         }
