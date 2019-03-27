@@ -75,12 +75,12 @@
                 ? (float)0
                 : (float)$holder->getShippingAddress()->getShippingAmount();
 
-            $tax = $holder->getBillingAddress()->getTaxAmount() == null
+            $tax = $holder->getBillingAddress() == null
               ? (float)0
               : (float)$holder->getBillingAddress()->getTaxAmount();
 
             if ($tax == 0) {
-              $tax = $holder->getShippingAddress()->getTaxAmount() == null
+              $tax = $holder->getShippingAddress() == null
                 ? (float)0
                 : (float)$holder->getShippingAddress()->getTaxAmount();
             }
