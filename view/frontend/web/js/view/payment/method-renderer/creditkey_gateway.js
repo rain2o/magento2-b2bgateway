@@ -43,7 +43,7 @@ define(
             },
 
             getCustomTitle: function() {
-              if (this.getTitle() && this.getTitle().trim() !== '') return $('#ck-payment-title').html(staticTitle);
+              if (this.getTitle() && this.getTitle().trim() !== '') return $('#ck-payment-title').html(this.getTitle());
 
               return ckClient.get_marketing_display()
                 .then(function(res) {
