@@ -1722,19 +1722,25 @@ var modal = function modal(source) {
   var existingModal = document.getElementById('creditkey-modal');
 
   if (existingModal !== null) {
+    var iframe = document.getElementById('creditkey-iframe');
+    var url = iframe.src;
+    if (url !== source + '?modal=true') {
+      existingModal.remove();
+      return modal(source);
+    }
     existingModal.style.display = 'flex';
   } else {
     // Otherwise, create the modal.
 
     var body = document.body;
     var style = 'margin: auto; width: 100%; border: none; height: 820px;';
-    var iframe = '<iframe id="creditkey-iframe" src="' + (source + '?modal=true') + '" style="' + style + '"></iframe>';
+    var _iframe = '<iframe id="creditkey-iframe" src="' + (source + '?modal=true') + '" style="' + style + '"></iframe>';
 
     if (!validate_url(source)) {
-      iframe = 'An invalid resource was requested';
+      _iframe = 'An invalid resource was requested';
     }
 
-    return body.insertAdjacentHTML('beforeend', '<div id="creditkey-modal"><div class="modal is-active"><div class="modal-background"></div><div class="modal-content" id="modal-card">' + iframe + '</div></div></div>');
+    return body.insertAdjacentHTML('beforeend', '<div id="creditkey-modal"><div class="modal is-active"><div class="modal-background"></div><div class="modal-content" id="modal-card">' + _iframe + '</div></div></div>');
   }
 };
 
