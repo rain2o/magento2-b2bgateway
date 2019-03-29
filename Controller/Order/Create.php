@@ -46,9 +46,7 @@
             $shippingAddress = $this->_creditKeyData->buildAddress($quote->getShippingAddress());
             $charges = $this->_creditKeyData->buildCharges($quote);
 
-            $quote->reserveOrderId();
-            $remoteId = $quote->getReservedOrderId();
-            //$remoteId = $quote->getId();
+            $remoteId = $quote->getId();
             $customerId = null;
             if ($this->_customerSession->isLoggedIn())
                 $customerId = $this->_customerSession->getCustomer()->getId();

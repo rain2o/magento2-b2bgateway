@@ -37,7 +37,7 @@ class CaptureCommand implements CommandInterface
         $this->_logger->debug('Capture Credit Key Payment: '.$ckOrderId.': '.$captureAmount);
 
         $order = $payment->getOrder();
-        $merchantOrderId = $order->getId();
+        $merchantOrderId = $order->getIncrementId();
         $merchantOrderStatus = $order->getStatus();
         $cartContents = $this->_creditKeyData->buildCartContents($order);
         $charges = $this->_creditKeyData->buildChargesWithUpdatedGrandTotal($order, $captureAmount);

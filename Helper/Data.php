@@ -71,9 +71,15 @@
         {
             $total = (float)$holder->getSubtotal();
 
-            $shippingAmount = $holder->getShippingAddress() == null
-                ? (float)0
-                : (float)$holder->getShippingAddress()->getShippingAmount();
+            $shippingAmount = $holder->getShippingAmount() == null
+              ? (float)0
+              : (float)$holder->getShippingAmount();
+
+            if ($shippingAmount == 0) {
+              $shippingAmount = $holder->getShippingAddress() == null
+                  ? (float)0
+                  : (float)$holder->getShippingAddress()->getShippingAmount();
+            }
 
             $tax = $holder->getBillingAddress() == null
               ? (float)0
@@ -89,7 +95,16 @@
               $tax = $holder->getTaxAmount();
             }
 
-            $discount = $holder->getSubtotal() - $holder->getSubtotalWithDiscount();
+            $discount = $holder->getSubtotalWithDiscount() == null
+              ? (float)0
+              : (float)$holder->getSubtotal() - $holder->getSubtotalWithDiscount();
+
+            if ($discount == 0) {
+              $discount = $holder->getDiscountAmount() == null
+                ? (float)0
+                : (float)abs($holder->getDiscountAmount());
+            }
+
             return new \CreditKey\Models\Charges($total, $shippingAmount, $tax, $discount, $updatedGrandTotal);
         }
     }
