@@ -46,6 +46,7 @@
             $shippingAddress = $this->_creditKeyData->buildAddress($quote->getShippingAddress());
             $charges = $this->_creditKeyData->buildCharges($quote);
 
+            // need to use this id to reference the quote when completing the order
             $remoteId = $quote->getId();
             $customerId = null;
             if ($this->_customerSession->isLoggedIn())
