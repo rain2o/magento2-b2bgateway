@@ -107,7 +107,7 @@
               try
               {
                   // Send the Magento Order ID and Status to Credit Key
-                  \CreditKey\Orders::update($ckOrderId, $order->getState(), $order->getId(), null, null, null);
+                  \CreditKey\Orders::update($ckOrderId, $order->getState(), $order->getIncrementId(), null, null, null);
               }
               catch (\Exception $e)
               {
