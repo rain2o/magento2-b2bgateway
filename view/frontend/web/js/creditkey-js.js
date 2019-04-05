@@ -1,5 +1,5 @@
 /*!
- * creditkey-js v1.0.33 - https://www.creditkey.com
+ * creditkey-js v1.0.35 - https://www.creditkey.com
  * MIT Licensed
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -1585,13 +1585,17 @@ var client_Client = function () {
     });
   };
 
-  Client.prototype.get_marketing_display = function get_marketing_display() {
+  Client.prototype.get_marketing_display = function get_marketing_display(charges) {
     var _this3 = this;
 
-    var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "checkout";
+    var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "checkout";
+
+    if (charges && (typeof charges === 'undefined' ? 'undefined' : _typeof(charges)) !== 'object') {
+      return reject('charges should be a charges object');
+    }
 
     return new Promise(function (resolve, reject) {
-      return _this3.network.post('ecomm/marketing' + _this3.key_param, { type: type }).then(function (res) {
+      return _this3.network.post('ecomm/marketing' + _this3.key_param, { type: type, charges: charges }).then(function (res) {
         return resolve(res);
       }).catch(function (err) {
         return reject(error);

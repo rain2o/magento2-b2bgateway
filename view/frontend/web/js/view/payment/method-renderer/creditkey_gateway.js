@@ -45,7 +45,16 @@ define(
             getCustomTitle: function() {
               if (this.getTitle() && this.getTitle().trim() !== '') return $('#ck-payment-title').html(this.getTitle());
 
-              return ckClient.get_marketing_display()
+              var totals = quote.getTotals()();
+              var charges = new creditKey.Charges(
+                totals.subtotal, 
+                totals.base_shipping_amount, 
+                totals.base_tax_amount, 
+                totals.base_discount_amount, 
+                totals.base_grand_total
+              );
+
+              return ckClient.get_marketing_display(charges)
                 .then(function(res) {
                   $('#ck-payment-title').html(res.text);
                 });
