@@ -54,9 +54,12 @@ define(
                 totals.base_grand_total
               );
 
-              return ckClient.get_marketing_display(charges)
+              // set a default display while loading
+              $('#ck-payment-title').html('loading Credit Key...');
+
+              return ckClient.get_marketing_display(charges, "checkout", "text")
                 .then(function(res) {
-                  $('#ck-payment-title').html(res.text);
+                  $('#ck-payment-title').html(res);
                 });
             },
             
