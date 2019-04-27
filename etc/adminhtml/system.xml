@@ -32,6 +32,20 @@
                   <label>Debug</label>
                   <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <group id="creditkey_productmarketing" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="200">
+                  <label>Marketing Content on Product Pages</label>
+                  <attribute type="expanded">1</attribute>
+                  <field id="active" translate="label comment" sortOrder="10" type="select" showInDefault="1" showInWebsite="1">
+                    <label>Enabled</label>
+                    <comment>Enable this to allow our marketing content to be displayed on the selected product pages.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                  </field>
+                  <field id="products" translate="label comment" sortOrder="20" type="multiselect" showInDefault="1" showInWebsite="1">
+                    <label>Products</label>
+                    <comment>Choose the products to display the marketing content on.</comment>
+                    <source_model>CreditKey\B2BGateway\Model\Adminhtml\Source\Products</source_model>
+                  </field>
+                </group>
             </group>
         </section>
     </system>
