@@ -1,131 +1,148 @@
 <?php
-    namespace CreditKey\B2BGateway\Controller\Order;
+namespace CreditKey\B2BGateway\Controller\Order;
 
-    use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Controller\ResultFactory;
 
-    class Complete extends \CreditKey\B2BGateway\Controller\AbstractCreditKeyController
+/**
+ * Complete order controller
+ */
+class Complete extends \CreditKey\B2BGateway\Controller\AbstractCreditKeyController
+{
+    /**
+     * @var \Magento\Quote\Model\QuoteManagement
+     */
+    private $quoteManagement;
+
+    /**
+     * @var \Magento\Checkout\Model\Cart
+     */
+    private $modelCart;
+
+    /**
+     * Construct
+     *
+     * @param \Magento\Framework\App\Action\Context $context
+     * @param \CreditKey\B2BGateway\Helper\Api $creditKeyApi
+     * @param \CreditKey\B2BGateway\Helper\Data $creditKeyData
+     * @param \Magento\Customer\Model\Url $customerUrl
+     * @param \Magento\Checkout\Model\Session $checkoutSession
+     * @param \Magento\Customer\Model\Session $customerSession
+     * @param \Psr\Log\LoggerInterface $logger
+     * @param \Magento\Quote\Model\QuoteManagement $quoteManagement
+     * @param \Magento\Checkout\Model\Cart $modelCart
+     */
+    public function __construct(
+        \Magento\Framework\App\Action\Context $context,
+        \CreditKey\B2BGateway\Helper\Api $creditKeyApi,
+        \CreditKey\B2BGateway\Helper\Data $creditKeyData,
+        \Magento\Customer\Model\Url $customerUrl,
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Magento\Customer\Model\Session $customerSession,
+        \Psr\Log\LoggerInterface $logger,
+        \Magento\Quote\Model\QuoteManagement $quoteManagement,
+        \Magento\Checkout\Model\Cart $modelCart
+    ) {
+        $this->quoteManagement = $quoteManagement;
+        $this->modelCart = $modelCart;
+
+        parent::__construct(
+            $context,
+            $creditKeyApi,
+            $creditKeyData,
+            $customerUrl,
+            $checkoutSession,
+            $customerSession,
+            $logger
+        );
+    }
+
+    /**
+     * Execute the complete order action
+     *
+     * @return \Magento\Framework\Controller\Result\Redirect|$this
+     */
+    public function execute()
     {
-        protected $_quoteManagement;
-        protected $_modelCart;
+        $quoteId = $this->getRequest()->getParam('ref');
+        $ckOrderId = $this->getRequest()->getParam('key');
 
-        public function __construct(
-            \Magento\Framework\App\Action\Context $context,
-            \CreditKey\B2BGateway\Helper\Api $creditKeyApi,
-            \CreditKey\B2BGateway\Helper\Data $creditKeyData,
-            \Magento\Customer\Model\Url $customerUrl,
-            \Magento\Checkout\Model\Session $checkoutSession,
-            \Magento\Customer\Model\Session $customerSession,
-            \Magento\Framework\Message\ManagerInterface $messageManager,
-            \Psr\Log\LoggerInterface $logger,
-            \Magento\Framework\Controller\ResultFactory $resultFactory,
-            \Magento\Quote\Model\QuoteManagement $quoteManagement,
-            \Magento\Checkout\Model\Cart $modelCart
-        ) {
-            $this->_quoteManagement = $quoteManagement;
-            $this->_resultFactory = $resultFactory;
-            $this->_modelCart = $modelCart;
+        $quote = $this->checkoutSession->getQuote();
 
-            parent::__construct(
-                $context,
-                $creditKeyApi,
-                $creditKeyData,
-                $customerUrl,
-                $checkoutSession,
-                $customerSession,
-                $messageManager,
-                $logger
-            );
+        if ($quote->getId() !== $quoteId) {
+            // Checkout session expired - redirect back to checkout
+            $this->redirect('checkout');
+            return $this;
         }
 
-      public function execute()
-      {
-          $quoteId = $this->getRequest()->getParam('ref');
-          $ckOrderId = $this->getRequest()->getParam('key');
+        // Check that the payment is authorized
+        $this->creditKeyApi->configure();
+        $isAuthorized = false;
+        
+        try {
+            $isAuthorized = \CreditKey\Checkout::completeCheckout($ckOrderId);
+        } catch (\Exception $e) {
+            $this->logger->critical($e);
+            $this->messageManager->addErrorMessage(__('CREDIT_KEY_AUTH_FAILED'));
+            $this->redirect('checkout');
+            return $this;
+        }
 
-          $quote = $this->_checkoutSession->getQuote();
+        if (!$isAuthorized) {
+            // Payment not authorized - redirect back to checkout
+            $this->redirect('checkout');
+            return $this;
+        }
 
-          if ($quote->getId() != $quoteId)
-          {
-              // Checkout session expired - redirect back to checkout
-              $this->_redirect('checkout');
-              return $this;
-          }
+        $this->checkoutSession
+            ->setLastQuoteId($quote->getId())
+            ->setLastSuccessQuoteId($quote->getId())
+            ->clearHelperData();
 
-          // Check that the payment is authorized
-          $this->_creditKeyApi->configure();
-          $isAuthorized = false;
-          try
-          {
-              $isAuthorized = \CreditKey\Checkout::completeCheckout($ckOrderId);
-          }
-          catch (\Exception $e)
-          {
-                $this->_logger->critical($e);
-                $this->_messageManager->addErrorMessage(__('CREDIT_KEY_AUTH_FAILED'));
-                $this->_redirect('checkout');
-                return $this;
-          }
+        $email = $quote->getBillingAddress()->getEmail();
 
-          if (!$isAuthorized)
-          {
-              // Payment not authorized - redirect back to checkout
-              $this->_redirect('checkout');
-              return $this;
-          }
+        if (!$this->customerSession->isLoggedIn()) {
+            $quote->setCheckoutMethod('guest');
+            $quote->setCustomerIsGuest(true);
+            $quote->setCustomerEmail($email);
+        }
 
-          $this->_checkoutSession
-              ->setLastQuoteId($quote->getId())
-              ->setLastSuccessQuoteId($quote->getId())
-              ->clearHelperData();
+        $order = $this->quoteManagement->submit($quote);
 
-          $email = $quote->getBillingAddress()->getEmail();
+        if ($order) {
+            $this->checkoutSession
+                ->setLastOrderId($order->getId())
+                ->setLastRealOrderId($order->getIncrementId())
+                ->setLastOrderStatus($order->getStatus());
 
-          if (!$this->_customerSession->isLoggedIn()) {
-              $quote->setCheckoutMethod('guest');
-              $quote->setCustomerIsGuest(true);
-              $quote->setCustomerEmail($email);
-          }
+            $order->setState(\Magento\Sales\Model\Order::STATE_PROCESSING, true);
+            $order->setStatus(\Magento\Sales\Model\Order::STATE_PROCESSING);
+            $order->save();
 
-          $order = $this->_quoteManagement->submit($quote);
+            $orderPayment = $order->getPayment();
+            $orderPayment->setAdditionalInformation('ckOrderId', $ckOrderId);
+            $orderPayment->setTransactionId($ckOrderId);
+            $orderPayment->setState('paid');
+            $order->save();
 
-          if ($order) {
-              $this->_checkoutSession
-                  ->setLastOrderId($order->getId())
-                  ->setLastRealOrderId($order->getIncrementId())
-                  ->setLastOrderStatus($order->getStatus());
+            try {
+                // Send the Magento Order ID and Status to Credit Key
+                \CreditKey\Orders::update($ckOrderId, $order->getState(), $order->getIncrementId(), null, null, null);
+            } catch (\Exception $e) {
+                $this->logger->critical($e);
+            }
+        }
 
-              $order->setState(\Magento\Sales\Model\Order::STATE_PROCESSING, true);
-              $order->setStatus(\Magento\Sales\Model\Order::STATE_PROCESSING);
-              $order->save();
+        $cart = $this->modelCart;
+        $cart->truncate();
+        $cart->save();
+        $items = $quote->getAllVisibleItems();
+        foreach ($items as $item) {
+            $itemId = $item->getItemId();
+            $cart->removeItem($itemId)->save();
+        }
 
-              $orderPayment = $order->getPayment();
-              $orderPayment->setAdditionalInformation('ckOrderId', $ckOrderId);
-              $orderPayment->setTransactionId($ckOrderId);
-              $orderPayment->setState('paid');
-              $order->save();
-
-              try
-              {
-                  // Send the Magento Order ID and Status to Credit Key
-                  \CreditKey\Orders::update($ckOrderId, $order->getState(), $order->getIncrementId(), null, null, null);
-              }
-              catch (\Exception $e)
-              {
-                  $this->_logger->critical($e);
-              }
-          }
-
-          $cart = $this->_modelCart;
-          $cart->truncate();
-          $cart->save();
-          $items = $quote->getAllVisibleItems();
-          foreach($items as $item) {
-              $itemId = $item->getItemId();
-              $cart->removeItem($itemId)->save();
-          }
-
-          $resultRedirect = $this->_resultFactory->create(ResultFactory::TYPE_REDIRECT);
-          $resultRedirect->setPath('checkout/onepage/success');
-          return $resultRedirect;
-      }
-  }
+        $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+        $resultRedirect->setPath('checkout/onepage/success');
+        return $resultRedirect;
+    }
+}

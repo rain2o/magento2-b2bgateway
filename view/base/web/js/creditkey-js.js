@@ -1649,7 +1649,6 @@ var client_Client = function () {
 
     var component = components_button;
 
-    console.log(display);
     switch (display) {
       case "text":
         component = components_text;

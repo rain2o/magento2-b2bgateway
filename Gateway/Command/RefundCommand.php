@@ -5,17 +5,33 @@ use Magento\Payment\Gateway\Command;
 use Magento\Payment\Gateway\Command\CommandException;
 use Magento\Payment\Gateway\CommandInterface;
 
+/**
+ * Refund Command
+ */
 class RefundCommand implements CommandInterface
 {
-    protected $_logger;
-    protected $_creditKeyApi;
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
 
+    /**
+     * @var \CreditKey\B2BGateway\Helper\Api
+     */
+    private $creditKeyApi;
+
+    /**
+     * Construct
+     *
+     * @param \Psr\Log\LoggerInterface $logger
+     * @param \CreditKey\B2BGateway\Helper\Api $creditKeyApi
+     */
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \CreditKey\B2BGateway\Helper\Api $creditKeyApi
     ) {
-        $this->_logger = $logger;
-        $this->_creditKeyApi = $creditKeyApi;
+        $this->logger = $logger;
+        $this->creditKeyApi = $creditKeyApi;
     }
 
     /**
@@ -25,16 +41,17 @@ class RefundCommand implements CommandInterface
      * @return null|Command\ResultInterface
      * @throws CommandException
      */
-    public function execute(array $commandSubject) {
+    public function execute(array $commandSubject)
+    {
         $paymentDO = $commandSubject['payment'];
         $refundAmount = $commandSubject['amount'];
 
         $payment = $paymentDO->getPayment();
         $ckOrderId = $payment->getAdditionalInformation('ckOrderId');
 
-        $this->_logger->debug('Refund Credit Key Payment: '.$ckOrderId.': '.$refundAmount);
+        $this->logger->debug('Refund Credit Key Payment: ' . $ckOrderId . ': ' . $refundAmount);
 
-        $this->_creditKeyApi->configure();
+        $this->creditKeyApi->configure();
         $ckOrder = \CreditKey\Orders::refund($ckOrderId, $refundAmount);
 
         return null;
