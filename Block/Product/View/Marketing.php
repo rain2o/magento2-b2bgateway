@@ -2,7 +2,6 @@
 namespace CreditKey\B2BGateway\Block\Product\View;
 
 use Magento\Catalog\Model\Product;
-use Magento\Store\Model\ScopeInterface;
 
 /**
  * Marketing Block
@@ -22,9 +21,9 @@ class Marketing extends \Magento\Framework\View\Element\Template
     private $coreRegistry = null;
 
     /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     * @var \CreditKey\B2BGateway\Helper\Config
      */
-    private $scopeConfig;
+    private $config;
 
     /**
      * @var \Magento\Framework\Serialize\SerializerInterface
@@ -51,7 +50,7 @@ class Marketing extends \Magento\Framework\View\Element\Template
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+     * @param \CreditKey\B2BGateway\Helper\Config $config
      * @param \Magento\Framework\Serialize\SerializerInterface $json
      * @param \CreditKey\B2BGateway\Helper\Api $creditKeyApi
      * @param \Magento\Tax\Api\TaxCalculationInterface $taxCalculation
@@ -60,14 +59,14 @@ class Marketing extends \Magento\Framework\View\Element\Template
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Framework\Registry $registry,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \CreditKey\B2BGateway\Helper\Config $config,
         \Magento\Framework\Serialize\SerializerInterface $json,
         \CreditKey\B2BGateway\Helper\Api $creditKeyApi,
         \Magento\Tax\Api\TaxCalculationInterface $taxCalculation,
         array $data = []
     ) {
         $this->coreRegistry = $registry;
-        $this->scopeConfig = $scopeConfig;
+        $this->config = $config;
         $this->json = $json;
         $this->creditKeyApi = $creditKeyApi;
         $this->taxCalculation = $taxCalculation;
@@ -113,15 +112,9 @@ class Marketing extends \Magento\Framework\View\Element\Template
 
         $config = [
             'ckConfig' => [
-                'endpoint' => $this->scopeConfig->getValue(
-                    'payment/creditkey_gateway/creditkey_endpoint',
-                    ScopeInterface::SCOPE_STORE
-                ),
-                'publicKey' => $this->creditKeyApi->public_key(),
-                'type' => $this->scopeConfig->getValue(
-                    'payment/creditkey_gateway/creditkey_productmarketing/type',
-                    ScopeInterface::SCOPE_STORE
-                ),
+                'endpoint' => $this->config->getEndpoint(),
+                'publicKey' => $this->config->getPublicKey(),
+                'type' => $this->config->getPdpMarketingType(),
                 'charges' => $this->getCharges()
             ]
         ];
@@ -162,11 +155,7 @@ class Marketing extends \Magento\Framework\View\Element\Template
     private function getAuthorizedProducts()
     {
         if (!$this->authorizedProducts) {
-            $productIds = $this->scopeConfig->getValue(
-                'payment/creditkey_gateway/creditkey_productmarketing/products',
-                ScopeInterface::SCOPE_STORE
-            );
-            $this->authorizedProducts = explode(",", $productIds);
+            $this->authorizedProducts = $this->config->getPdpMarketingProducts();
         }
         return $this->authorizedProducts;
     }
