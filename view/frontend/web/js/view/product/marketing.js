@@ -23,7 +23,7 @@ define(
                 );
                 var charges = new creditKey.Charges(...this.options.ckConfig.charges);
 
-                return ckClient.get_marketing_display(charges, "pdp", "text")
+                return ckClient.get_marketing_display(charges, "pdp", this.options.ckConfig.type)
                     .then(function(res) {
                         elem.html(res);
                     });

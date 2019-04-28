@@ -118,6 +118,10 @@ class Marketing extends \Magento\Framework\View\Element\Template
                     ScopeInterface::SCOPE_STORE
                 ),
                 'publicKey' => $this->creditKeyApi->public_key(),
+                'type' => $this->scopeConfig->getValue(
+                    'payment/creditkey_gateway/creditkey_productmarketing/type',
+                    ScopeInterface::SCOPE_STORE
+                ),
                 'charges' => $this->getCharges()
             ]
         ];
