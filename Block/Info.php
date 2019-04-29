@@ -5,6 +5,9 @@ use Magento\Framework\Phrase;
 use Magento\Payment\Block\ConfigurableInfo;
 use CreditKey\B2BGateway\Gateway\Response\FraudHandler;
 
+/**
+ * Info Block
+ */
 class Info extends ConfigurableInfo
 {
     /**

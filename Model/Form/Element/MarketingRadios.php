@@ -2,7 +2,6 @@
 namespace CreditKey\B2BGateway\Model\Form\Element;
 
 use Magento\Framework\Escaper;
-use Magento\Store\Model\ScopeInterface;
 
 /**
  * MarketingRadios Form Element
@@ -10,9 +9,11 @@ use Magento\Store\Model\ScopeInterface;
 class MarketingRadios extends \Magento\Framework\Data\Form\Element\Radios
 {
     /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     * Config Helper
+     *
+     * @var \CreditKey\B2BGateway\Helper\Config
      */
-    private $scopeConfig;
+    private $config;
 
     /**
      * @var \Magento\Framework\Serialize\SerializerInterface
@@ -28,7 +29,7 @@ class MarketingRadios extends \Magento\Framework\Data\Form\Element\Radios
      * @param \Magento\Framework\Data\Form\Element\Factory $factoryElement
      * @param \Magento\Framework\Data\Form\Element\CollectionFactory $factoryCollection
      * @param Escaper $escaper
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+     * @param \CreditKey\B2BGateway\Helper\Config $config
      * @param \Magento\Framework\Serialize\SerializerInterface $json
      * @param \CreditKey\B2BGateway\Helper\Api $creditKeyApi
      * @param array $data
@@ -37,12 +38,12 @@ class MarketingRadios extends \Magento\Framework\Data\Form\Element\Radios
         \Magento\Framework\Data\Form\Element\Factory $factoryElement,
         \Magento\Framework\Data\Form\Element\CollectionFactory $factoryCollection,
         Escaper $escaper,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \CreditKey\B2BGateway\Helper\Config $config,
         \Magento\Framework\Serialize\SerializerInterface $json,
         \CreditKey\B2BGateway\Helper\Api $creditKeyApi,
         $data = []
     ) {
-        $this->scopeConfig = $scopeConfig;
+        $this->config = $config;
         $this->json = $json;
         $this->creditKeyApi = $creditKeyApi;
         parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
@@ -88,11 +89,8 @@ class MarketingRadios extends \Magento\Framework\Data\Form\Element\Radios
 
         $config = [
             'ckConfig' => [
-                'endpoint' => $this->scopeConfig->getValue(
-                    'payment/creditkey_gateway/creditkey_endpoint',
-                    ScopeInterface::SCOPE_STORE
-                ),
-                'publicKey' => $this->creditKeyApi->public_key()
+                'endpoint' => $this->config->getEndpoint(),
+                'publicKey' => $this->config->getPublicKey()
             ]
         ];
 

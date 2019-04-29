@@ -7,15 +7,25 @@ use Magento\Payment\Gateway\CommandInterface;
 use Magento\Sales\Model\Order;
 use \Psr\Log\LoggerInterface;
 
+/**
+ * Initialize Command
+ */
 class InitializeCommand implements CommandInterface
 {
-  protected $logger;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
-  public function __construct(
-    LoggerInterface $logger
-  ) {
-    $this->logger = $logger;
-  }
+    /**
+     * Construct
+     *
+     * @param \Psr\Log\LoggerInterface $logger
+     */
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * Executes command basing on business object
@@ -24,20 +34,21 @@ class InitializeCommand implements CommandInterface
      * @return null|Command\ResultInterface
      * @throws CommandException
      */
-    public function execute(array $commandSubject) {
-      $stateObject = $commandSubject['stateObject'];
-      $paymentDO = $commandSubject['payment'];
-      $payment = $paymentDO->getPayment();
+    public function execute(array $commandSubject)
+    {
+        $stateObject = $commandSubject['stateObject'];
+        $paymentDO = $commandSubject['payment'];
+        $payment = $paymentDO->getPayment();
 
-      $order = $payment->getOrder();
-      $order->setCanSendNewEmailFlag(false);
+        $order = $payment->getOrder();
+        $order->setCanSendNewEmailFlag(false);
 
-      $payment->authorize(true, $payment->getAmountOrdered());
+        $payment->authorize(true, $payment->getAmountOrdered());
 
-      $stateObject->setData('state', Order::STATE_PENDING_PAYMENT);
-      $stateObject->setData('status', Order::STATE_PENDING_PAYMENT);
-      $stateObject->setIsNotified(false);
+        $stateObject->setData('state', Order::STATE_PENDING_PAYMENT);
+        $stateObject->setData('status', Order::STATE_PENDING_PAYMENT);
+        $stateObject->setIsNotified(false);
 
-      return null;
+        return null;
     }
 }

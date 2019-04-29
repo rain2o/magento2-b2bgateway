@@ -6,14 +6,24 @@ use Magento\Payment\Gateway\Command\CommandException;
 use Magento\Payment\Gateway\CommandInterface;
 use \Psr\Log\LoggerInterface;
 
+/**
+ * Authorize Command
+ */
 class AuthorizeCommand implements CommandInterface
 {
-  protected $_logger;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
-    public function __construct(
-        LoggerInterface $logger
-    ) {
-        $this->_logger = $logger;
+    /**
+     * Construct
+     *
+     * @param \Psr\Log\LoggerInterface $logger
+     */
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**
@@ -23,14 +33,15 @@ class AuthorizeCommand implements CommandInterface
      * @return null|Command\ResultInterface
      * @throws CommandException
      */
-    public function execute(array $commandSubject) {
-      $paymentDO = $commandSubject['payment'];
-      $payment = $paymentDO->getPayment();
+    public function execute(array $commandSubject)
+    {
+        $paymentDO = $commandSubject['payment'];
+        $payment = $paymentDO->getPayment();
 
-      $this->_logger->debug('Authorizing Credit Key Payment: '.$payment->getId());
+        $this->logger->debug('Authorizing Credit Key Payment: ' . $payment->getId());
 
-      $payment->setIsTransactionClosed(false);
+        $payment->setIsTransactionClosed(false);
 
-      return null;
+        return null;
     }
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <body>
   <referenceContainer name="content">
-    <block class="CreditKey\B2BGateway\Block\Success"
+    <block class="Magento\Framework\View\Element\Template"
       name="creditkey.order.success" 
       template="CreditKey_B2BGateway::order/success.phtml" 
       after="customer.customer.data" />

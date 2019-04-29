@@ -1,28 +1,60 @@
 <?php
-    namespace CreditKey\B2BGateway\Helper;
+namespace CreditKey\B2BGateway\Helper;
 
-    use Magento\Store\Model\ScopeInterface;
-    
-    class Api
+use Magento\Store\Model\ScopeInterface;
+
+/**
+ * API Helper
+ */
+class Api
+{
+    /**
+     * Config helper
+     *
+     * @var Config
+     */
+    private $config;
+
+    /**
+     * Cached value for Public Key
+     *
+     * @var string
+     */
+    private $publicKey;
+
+    /**
+     * Construct
+     *
+     * @param \CreditKey\B2BGateway\Helper\Config $config
+     */
+    public function __construct(Config $config)
     {
-        protected $_configScopeConfigInterface;
-
-        public function __construct(
-            \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfigInterface
-        ) {
-            $this->_configScopeConfigInterface = $scopeConfigInterface;
-        }
-
-        public function configure()
-        {
-            $endpoint = $this->_configScopeConfigInterface->getValue('payment/creditkey_gateway/creditkey_endpoint', ScopeInterface::SCOPE_STORE);
-            $publicKey = $this->_configScopeConfigInterface->getValue('payment/creditkey_gateway/creditkey_publickey', ScopeInterface::SCOPE_STORE);
-            $sharedSecret = $this->_configScopeConfigInterface->getValue('payment/creditkey_gateway/creditkey_sharedsecret', ScopeInterface::SCOPE_STORE);
-            \CreditKey\Api::configure($endpoint, $publicKey, $sharedSecret);
-        }
-
-        public function public_key() 
-        {
-          return $this->_configScopeConfigInterface->getValue('payment/creditkey_gateway/creditkey_publickey', ScopeInterface::SCOPE_STORE);
-        }
+        $this->config = $config;
     }
+
+    /**
+     * Configure the API Client
+     *
+     * @return void
+     */
+    public function configure()
+    {
+        $endpoint = $this->config->getEndpoint();
+        $publicKey = $this->getPublicKey();
+        $sharedSecret = $this->config->getSharedSecret();
+        \CreditKey\Api::configure($endpoint, $publicKey, $sharedSecret);
+    }
+
+    /**
+     * Get Public Key value
+     *
+     * @return string
+     */
+    public function getPublicKey()
+    {
+        if (!$this->publicKey) {
+            $this->publicKey = $this->config->getPublicKey();
+        }
+        return $this->publicKey;
+    }
+}
