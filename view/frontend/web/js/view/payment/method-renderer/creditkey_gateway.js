@@ -69,12 +69,19 @@ define(
             },
             
             redirectToPayment: function() {
-              heap.track('Magento Redirect to Credit Key', { data: data.redirectUrl });
+              // validate the form
+              if (this.validate() && additionalValidators.validate()) {
+                // if valide then we call our checkout modal
+                heap.track('Magento Redirect to Credit Key', { data: data.redirectUrl });
               
-              setPaymentInformation(messageContainer, { method: quote.paymentMethod().method })
-                .then(function () {
-                  creditKey.checkout(data.redirectUrl, 'modal')
-                });
+                setPaymentInformation(messageContainer, { method: quote.paymentMethod().method })
+                  .then(function () {
+                    creditKey.checkout(data.redirectUrl, 'modal')
+                  });
+
+                return true;
+              }
+              return false;
             },
 
             redirectAfterPlaceOrder: false,
