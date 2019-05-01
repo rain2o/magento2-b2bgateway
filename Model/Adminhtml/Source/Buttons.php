@@ -15,8 +15,7 @@ class Buttons implements \Magento\Framework\Option\ArrayInterface
     {
         $options = [
             ['value' => "text", 'label' => 'Text'],
-            ['value' => "button", 'label' => 'Button'],
-            ['value' => "button_text", 'label' => 'Button and Text']
+            ['value' => "button", 'label' => 'Button']
         ];
 
         return $options;

@@ -23,7 +23,7 @@ define([
             );
             var charges = new creditKey.Charges(0,0,0,0,0);
     
-            ckClient.get_marketing_display(charges, view, $(elem).val())
+            ckClient.get_marketing_display(charges, view, $(elem).val(), 'small')
                 .then(function(res) {
                     $('label[for="' + $(elem).attr('id') + '"] span').html(res);
                 });

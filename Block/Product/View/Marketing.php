@@ -97,7 +97,7 @@ class Marketing extends \Magento\Framework\View\Element\Template
 
         return (bool) ($product
                 && $product->getId()
-                && in_array($product->getId(), $this->getAuthorizedProducts())
+                && (in_array($product->getId(), $this->getAuthorizedProducts()) || count($this->getAuthorizedProducts()) < 1)
         );
     }
 
