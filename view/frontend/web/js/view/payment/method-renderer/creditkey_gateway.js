@@ -65,9 +65,6 @@ define(
             
             isDisplayed: function() {
               var data = window.checkoutConfig.payment.creditkey_gateway;
-              if (data.isCreditKeyDisplayed) {
-                this.getCustomTitle();
-              }
               return data.isCreditKeyDisplayed;
             },
             
