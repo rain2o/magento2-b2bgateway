@@ -57,7 +57,7 @@ define(
               // set a default display while loading
               $('#ck-payment-title').html('loading Credit Key...');
 
-              return ckClient.get_marketing_display(charges, "checkout", "text")
+              return ckClient.get_marketing_display(charges, "checkout", data.type)
                 .then(function(res) {
                   $('#ck-payment-title').html(res);
                 });

@@ -15,6 +15,7 @@ define([
 
         _init: function initMarketing() {
             var elem = this.element;
+            var view = ($(elem).attr('id').indexOf('checkout') > 0) ? 'checkout' : 'pdp';
             
             var ckClient = new creditKey.Client(
                 this.options.ckConfig.publicKey,
@@ -22,7 +23,7 @@ define([
             );
             var charges = new creditKey.Charges(0,0,0,0,0);
     
-            ckClient.get_marketing_display(charges, 'pdp', $(elem).val())
+            ckClient.get_marketing_display(charges, view, $(elem).val())
                 .then(function(res) {
                     $('label[for="' + $(elem).attr('id') + '"] span').html(res);
                 });

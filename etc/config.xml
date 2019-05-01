@@ -23,6 +23,7 @@
                 <debugReplaceKeys>MERCHANT_KEY</debugReplaceKeys>
                 <paymentInfoKeys>FRAUD_MSG_LIST</paymentInfoKeys>
                 <privateInfoKeys>FRAUD_MSG_LIST</privateInfoKeys>
+                <creditkey_checkoutdisplay>text</creditkey_checkoutdisplay>
             </creditkey_gateway>
         </payment>
     </default>

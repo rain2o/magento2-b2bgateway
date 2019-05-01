@@ -11,13 +11,14 @@ class Config
     /**
      * Config paths
      */
-    const XML_PATH_PAYMENT_CKGATEWAY     = 'payment/creditkey_gateway';
-    const XML_KEY_ENDPOINT               = '/creditkey_endpoint';
-    const XML_KEY_PUBLICKEY              = '/creditkey_publickey';
-    const XML_KEY_SECRET                 = '/creditkey_sharedsecret';
-    const XML_KEY_PDP_MARKETING_ACTIVE   = '/creditkey_productmarketing/active';
-    const XML_KEY_PDP_MARKETING_PRODUCTS = '/creditkey_productmarketing/products';
-    const XML_KEY_PDP_MARKETING_TYPE     = '/creditkey_productmarketing/type';
+    const XML_PATH_PAYMENT_CKGATEWAY      = 'payment/creditkey_gateway';
+    const XML_KEY_ENDPOINT                = '/creditkey_endpoint';
+    const XML_KEY_PUBLICKEY               = '/creditkey_publickey';
+    const XML_KEY_SECRET                  = '/creditkey_sharedsecret';
+    const XML_KEY_CHECKOUT_MARKETING_TYPE = '/creditkey_checkoutdisplay';
+    const XML_KEY_PDP_MARKETING_ACTIVE    = '/creditkey_productmarketing/active';
+    const XML_KEY_PDP_MARKETING_PRODUCTS  = '/creditkey_productmarketing/products';
+    const XML_KEY_PDP_MARKETING_TYPE      = '/creditkey_productmarketing/type';
 
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
@@ -88,6 +89,16 @@ class Config
     public function isPdpMarketingActive()
     {
         return (boolean) $this->getConfigValue(self::XML_KEY_PDP_MARKETING_ACTIVE);
+    }
+
+    /**
+     * Get the marketing display type for checkout
+     *
+     * @return string
+     */
+    public function getCheckoutMarketingType()
+    {
+        return $this->getConfigValue(self::XML_KEY_CHECKOUT_MARKETING_TYPE);
     }
 
     /**
