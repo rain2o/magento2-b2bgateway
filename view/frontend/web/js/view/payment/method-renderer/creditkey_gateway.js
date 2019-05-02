@@ -79,9 +79,7 @@ define(
                     creditKey.checkout(data.redirectUrl, 'modal')
                   });
 
-                return true;
               }
-              return false;
             },
 
             redirectAfterPlaceOrder: false,
