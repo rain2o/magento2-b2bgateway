@@ -105,7 +105,8 @@ class ConfigProvider implements \Magento\Checkout\Model\ConfigProviderInterface
                     'redirectUrl' => $this->urlBuilder->getUrl('creditkey_gateway/order/create'),
                     'publicKey' => $this->config->getPublicKey(),
                     'isCreditKeyDisplayed' => $isCreditKeyDisplayed,
-                    'type' => $this->config->getCheckoutMarketingType()
+                    'type' => $this->config->getCheckoutMarketingType(),
+                    'size' => $this->config->getCheckoutMarketingSize()
                 ]
             ]
         ];

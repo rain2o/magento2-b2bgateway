@@ -24,6 +24,11 @@
                 <paymentInfoKeys>FRAUD_MSG_LIST</paymentInfoKeys>
                 <privateInfoKeys>FRAUD_MSG_LIST</privateInfoKeys>
                 <creditkey_checkoutdisplay>text</creditkey_checkoutdisplay>
+                <creditkey_checkoutsize>small</creditkey_checkoutsize>
+                <creditkey_productmarketing>
+                    <type>text</type>
+                    <size>small</size>
+                </creditkey_productmarketing>
             </creditkey_gateway>
         </payment>
     </default>
