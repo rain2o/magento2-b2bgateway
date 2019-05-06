@@ -16,9 +16,11 @@ class Config
     const XML_KEY_PUBLICKEY               = '/creditkey_publickey';
     const XML_KEY_SECRET                  = '/creditkey_sharedsecret';
     const XML_KEY_CHECKOUT_MARKETING_TYPE = '/creditkey_checkoutdisplay';
+    const XML_KEY_CHECKOUT_MARKETING_SIZE = '/creditkey_checkoutsize';
     const XML_KEY_PDP_MARKETING_ACTIVE    = '/creditkey_productmarketing/active';
     const XML_KEY_PDP_MARKETING_PRODUCTS  = '/creditkey_productmarketing/products';
     const XML_KEY_PDP_MARKETING_TYPE      = '/creditkey_productmarketing/type';
+    const XML_KEY_PDP_MARKETING_SIZE      = '/creditkey_productmarketing/size';
 
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
@@ -102,6 +104,16 @@ class Config
     }
 
     /**
+     * Get the marketing display size for checkout
+     *
+     * @return string
+     */
+    public function getCheckoutMarketingSize()
+    {
+        return $this->getConfigValue(self::XML_KEY_CHECKOUT_MARKETING_SIZE);
+    }
+
+    /**
      * Get array of product IDs selected to display marketing content
      *
      * @return array
@@ -121,5 +133,16 @@ class Config
     public function getPdpMarketingType()
     {
         return $this->getConfigValue(self::XML_KEY_PDP_MARKETING_TYPE);
+    }
+
+    /**
+     * Get size of marketing content to display
+     * on product details page
+     *
+     * @return string
+     */
+    public function getPdpMarketingSize()
+    {
+        return $this->getConfigValue(self::XML_KEY_PDP_MARKETING_SIZE);
     }
 }
