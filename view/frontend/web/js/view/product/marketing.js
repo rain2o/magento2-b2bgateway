@@ -17,13 +17,14 @@ define(
 
             _init: function initMarketing() {
                 var elem = this.element;
+                var config = this.options.ckConfig;
                 var ckClient = new creditKey.Client(
-                    this.options.ckConfig.publicKey,
-                    this.options.ckConfig.endpoint
+                    config.publicKey,
+                    config.endpoint
                 );
-                var charges = new creditKey.Charges(...this.options.ckConfig.charges);
+                var charges = new creditKey.Charges(...config.charges);
 
-                return ckClient.get_marketing_display(charges, "pdp", this.options.ckConfig.type)
+                return ckClient.get_marketing_display(charges, "pdp", config.type, config.size)
                     .then(function(res) {
                         elem.html(res);
                     });
