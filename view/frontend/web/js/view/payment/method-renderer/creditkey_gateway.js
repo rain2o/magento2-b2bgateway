@@ -18,6 +18,17 @@ define(
 
         var data = window.checkoutConfig.payment.creditkey_gateway;
         var ckClient = new creditKey.Client(data.publicKey, data.endpoint);
+        
+        quote.paymentMethod.subscribe(function(method) {
+          var originalOrderButton = $('.checkout.primary').last().last();
+          var originalOrderButtonVal = originalOrderButton.html();
+
+          if (method.method === 'creditkey_gateway') {
+            originalOrderButton.html('<span data-bind="i18n: \'Continue with Credit Key\'">Continue with Credit Key</span>');
+          } else {
+            originalOrderButton.html(originalOrderButtonVal);
+          }
+        }, null, 'change');
 
         return Component.extend({
             defaults: {
