@@ -52,9 +52,14 @@
                     <comment>Choose the products to display the marketing content on.</comment>
                     <source_model>CreditKey\B2BGateway\Model\Adminhtml\Source\Products</source_model>
                   </field>
+                  <field id="price" translate="label comment" sortOrder="25" type="radios" showInDefault="1" showInWebsite="1">
+                    <label>Price Ranges</label>
+                    <comment>Choose the product price range to display the marketing content on.</comment>
+                    <source_model>CreditKey\B2BGateway\Model\Adminhtml\Source\Prices</source_model>
+                  </field>
                   <field id="type" translate="label comment" sortOrder="30" type="CreditKey\B2BGateway\Model\Form\Element\MarketingRadios" showInDefault="1" showInWebsite="1">
                     <label>Display Type</label>
-                    <comment>Choose the style of the marketing content to display.</comment>
+                    <comment>Only show marketing content on products with the selected pricing.</comment>
                     <source_model>CreditKey\B2BGateway\Model\Adminhtml\Source\Buttons</source_model>
                   </field>
                   <field id="size" translate="label comment" sortOrder="35" type="radios" showInDefault="1" showInWebsite="1">

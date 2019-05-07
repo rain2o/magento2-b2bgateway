@@ -95,6 +95,12 @@ class Marketing extends \Magento\Framework\View\Element\Template
     {
         $product = $this->getProduct();
 
+        $price = abs($this->config->getPdpMarketingPrice());
+
+        if (is_numeric($price) && $price != 0 && $product->getPrice() >= $price) {
+          return false;
+        }
+
         return (bool) ($product
                 && $product->getId()
                 && (in_array($product->getId(), $this->getAuthorizedProducts()) || count($this->getAuthorizedProducts()) < 1)

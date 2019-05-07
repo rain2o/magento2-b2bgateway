@@ -19,6 +19,7 @@ class Config
     const XML_KEY_CHECKOUT_MARKETING_SIZE = '/creditkey_checkoutsize';
     const XML_KEY_PDP_MARKETING_ACTIVE    = '/creditkey_productmarketing/active';
     const XML_KEY_PDP_MARKETING_PRODUCTS  = '/creditkey_productmarketing/products';
+    const XML_KEY_PDP_MARKETING_PRICE     = '/creditkey_productmarketing/price';
     const XML_KEY_PDP_MARKETING_TYPE      = '/creditkey_productmarketing/type';
     const XML_KEY_PDP_MARKETING_SIZE      = '/creditkey_productmarketing/size';
 
@@ -122,6 +123,17 @@ class Config
     {
         $productIds = $this->getConfigValue(self::XML_KEY_PDP_MARKETING_PRODUCTS);
         return explode(',', $productIds);
+    }
+
+    /**
+     * Get price of marketing content to display
+     * on product details page
+     *
+     * @return string
+     */
+    public function getPdpMarketingPrice()
+    {
+        return $this->getConfigValue(self::XML_KEY_PDP_MARKETING_PRICE);
     }
 
     /**
