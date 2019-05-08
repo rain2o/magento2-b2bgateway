@@ -1921,7 +1921,7 @@ window.addEventListener('message', function (e) {
     var total_height = event.options;
 
     var height = void 0;
-    total_height <= window.innerHeight ? height = total_height : height = window.innerHeight;
+    total_height <= window.innerHeight ? height = total_height : height = window.innerHeight - 40;
     iframe_element.style.height = height.toString() + 'px';
   }
 }, false);
