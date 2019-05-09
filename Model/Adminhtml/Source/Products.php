@@ -57,6 +57,20 @@ class Products implements \Magento\Framework\Option\ArrayInterface
             $this->searchCriteriaBuilder->create()
         )->getItems();
 
+        if (count($products) > 1000) {
+          $options[] = [
+            'value' => 0,
+            'label' => 'Unable to list products (Too many listings)'
+          ];
+
+          $options[] = [
+            'value' => 0,
+            'label' => 'Will default to all products enabled'
+          ];
+
+          return $options;
+        }
+
         foreach ($products as $product) {
             $options[] = [
                 'value' => $product->getId(),

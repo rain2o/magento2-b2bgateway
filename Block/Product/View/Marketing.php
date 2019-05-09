@@ -62,6 +62,7 @@ class Marketing extends \Magento\Framework\View\Element\Template
         \CreditKey\B2BGateway\Helper\Config $config,
         \Magento\Framework\Serialize\SerializerInterface $json,
         \CreditKey\B2BGateway\Helper\Api $creditKeyApi,
+        \Psr\Log\LoggerInterface $logger,
         \Magento\Tax\Api\TaxCalculationInterface $taxCalculation,
         array $data = []
     ) {
@@ -69,6 +70,7 @@ class Marketing extends \Magento\Framework\View\Element\Template
         $this->config = $config;
         $this->json = $json;
         $this->creditKeyApi = $creditKeyApi;
+        $this->logger = $logger;
         $this->taxCalculation = $taxCalculation;
         parent::__construct($context, $data);
     }
@@ -103,7 +105,7 @@ class Marketing extends \Magento\Framework\View\Element\Template
 
         return (bool) ($product
                 && $product->getId()
-                && (in_array($product->getId(), $this->getAuthorizedProducts()) || count($this->getAuthorizedProducts()) < 1)
+                && (in_array($product->getId(), $this->getAuthorizedProducts()) || count($this->getAuthorizedProducts()) <= 1)
         );
     }
 

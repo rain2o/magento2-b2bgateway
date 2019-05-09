@@ -11,9 +11,10 @@ define(
       'Magento_Checkout/js/action/set-payment-information',
       'Magento_Checkout/js/model/quote',
       'Magento_SalesRule/js/model/payment/discount-messages',
+      'Magento_Customer/js/model/customer',
       'creditkeysdk'
     ],
-    function ($, Component, placeOrderAction, selectPaymentMethodAction, checkoutData, additionalValidators, setPaymentInformation, quote, messageContainer, creditKey) {
+    function ($, Component, placeOrderAction, selectPaymentMethodAction, checkoutData, additionalValidators, setPaymentInformation, quote, messageContainer, customerModel, creditKey) {
         'use strict';
 
         var originalOrderButton, originalOrderButtonVal;
@@ -65,6 +66,12 @@ define(
 
               // set a default display while loading
               $('#ck-payment-title').html('loading Credit Key...');
+
+              /*var customer = customerModel;*/
+              //if (customer.isLoggedIn()) {
+                //ckClient.get_customer(customer.customerData.email, customer.customerData.id)
+                  //.then(res => console.log(res));
+              /*}*/
 
               return ckClient.get_marketing_display(charges, "checkout", data.type, data.size)
                 .then(function(res) {
