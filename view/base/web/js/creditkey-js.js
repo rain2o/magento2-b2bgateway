@@ -1,5 +1,5 @@
 /*!
- * creditkey-js v1.0.44 - https://www.creditkey.com
+ * creditkey-js v1.0.45 - https://www.creditkey.com
  * MIT Licensed
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -1723,6 +1723,26 @@ var client_Client = function () {
     return new Promise(function (resolve, reject) {
       return _this3.network.post('ecomm/marketing' + _this3.key_param, { type: type, charges: charges }).then(function (res) {
         return resolve(component(_this3.key, res.text, type, size));
+      }).catch(function (err) {
+        return reject(err);
+      });
+    });
+  };
+
+  Client.prototype.get_customer = function get_customer(email, customer_id) {
+    var _this4 = this;
+
+    if (!email || !customer_id) {
+      return Promise.reject('Missing required paramters');
+    }
+
+    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+      return Promise.reject('Invalid email address');
+    }
+
+    return new Promise(function (resolve, reject) {
+      return _this4.network.post('ecomm/customer' + _this4.key_param, { email: email, customer_id: customer_id }).then(function (res) {
+        return resolve(res);
       }).catch(function (err) {
         return reject(err);
       });

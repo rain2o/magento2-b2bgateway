@@ -16,13 +16,11 @@ define(
     function ($, Component, placeOrderAction, selectPaymentMethodAction, checkoutData, additionalValidators, setPaymentInformation, quote, messageContainer, creditKey) {
         'use strict';
 
+        var originalOrderButton, originalOrderButtonVal;
         var data = window.checkoutConfig.payment.creditkey_gateway;
         var ckClient = new creditKey.Client(data.publicKey, data.endpoint);
-        
-        quote.paymentMethod.subscribe(function(method) {
-          var originalOrderButton = $('.checkout.primary').last().last();
-          var originalOrderButtonVal = originalOrderButton.html();
 
+        quote.paymentMethod.subscribe(function(method) {
           if (method.method === 'creditkey_gateway') {
             originalOrderButton.html('<span data-bind="i18n: \'Continue with Credit Key\'">Continue with Credit Key</span>');
           } else {
@@ -70,6 +68,8 @@ define(
 
               return ckClient.get_marketing_display(charges, "checkout", data.type, data.size)
                 .then(function(res) {
+                  originalOrderButton = $('.checkout.primary').last().last();
+                  originalOrderButtonVal = originalOrderButton.html();
                   $('#ck-payment-title').html(res);
                 });
             },
