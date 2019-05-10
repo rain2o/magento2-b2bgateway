@@ -36,10 +36,12 @@ class Products implements \Magento\Framework\Option\ArrayInterface
     public function __construct(
         ProductRepositoryInterface $productRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder,
+        \Psr\Log\LoggerInterface $logger,
         string $labelPattern = null
     ) {
         $this->productRepository = $productRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->logger = $logger;
 
         // Allows for extendable formatting of multiselect label
         if ($labelPattern !== null) {
@@ -53,11 +55,10 @@ class Products implements \Magento\Framework\Option\ArrayInterface
     public function toOptionArray()
     {
         $options = [];
-        $products = $this->productRepository->getList(
-            $this->searchCriteriaBuilder->create()
-        )->getItems();
+        $products = $this->productRepository->getList($this->searchCriteriaBuilder->create());
+        $total = $products->getTotalCount();
 
-        if (count($products) > 1000) {
+        if ($total > 1000) {
           $options[] = [
             'value' => 0,
             'label' => 'Unable to list products (Too many listings)'
@@ -69,9 +70,11 @@ class Products implements \Magento\Framework\Option\ArrayInterface
           ];
 
           return $options;
+        } else {
+          $allProducts = $products->getItems();
         }
 
-        foreach ($products as $product) {
+        foreach ($allProducts as $product) {
             $options[] = [
                 'value' => $product->getId(),
                 'label' => sprintf(
