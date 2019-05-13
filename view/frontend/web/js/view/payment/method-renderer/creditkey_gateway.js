@@ -70,7 +70,12 @@ define(
               /*var customer = customerModel;*/
               //if (customer.isLoggedIn()) {
                 //ckClient.get_customer(customer.customerData.email, customer.customerData.id)
-                  //.then(res => console.log(res));
+                  //.then(function(res) {
+                    //console.log(res);
+                  //})
+                  //.catch(function(err) {
+                    //console.log(err);
+                  //});
               /*}*/
 
               return ckClient.get_marketing_display(charges, "checkout", data.type, data.size)
