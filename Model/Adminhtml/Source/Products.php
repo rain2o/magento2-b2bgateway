@@ -55,21 +55,28 @@ class Products implements \Magento\Framework\Option\ArrayInterface
     public function toOptionArray()
     {
         $options = [];
+        $defaultOptions = [];
+
+        $defaultOptions[] = [
+          'value' => 0,
+          'label' => 'Unable to list products (Too many listings)'
+        ];
+
+        $defaultOptions[] = [
+          'value' => 0,
+          'label' => 'Will default to all products enabled'
+        ];
+
+        $urlParts = explode('/', $_SERVER['HTTP_REFERER']);
+        if (strpos($urlParts[2], 'totalinksolutions') !== false) {
+          return $defaultOptions;
+        }
+
         $products = $this->productRepository->getList($this->searchCriteriaBuilder->create());
         $total = $products->getTotalCount();
 
         if ($total > 1000) {
-          $options[] = [
-            'value' => 0,
-            'label' => 'Unable to list products (Too many listings)'
-          ];
-
-          $options[] = [
-            'value' => 0,
-            'label' => 'Will default to all products enabled'
-          ];
-
-          return $options;
+          return $defaultOptions;
         } else {
           $allProducts = $products->getItems();
         }
