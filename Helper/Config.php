@@ -18,7 +18,7 @@ class Config
     const XML_KEY_CHECKOUT_MARKETING_TYPE = '/creditkey_checkoutdisplay';
     const XML_KEY_CHECKOUT_MARKETING_SIZE = '/creditkey_checkoutsize';
     const XML_KEY_PDP_MARKETING_ACTIVE    = '/creditkey_productmarketing/active';
-    const XML_KEY_PDP_MARKETING_PRODUCTS  = '/creditkey_productmarketing/products';
+    const XML_KEY_PDP_MARKETING_CATS      = '/creditkey_productmarketing/categories';
     const XML_KEY_PDP_MARKETING_PRICE     = '/creditkey_productmarketing/price';
     const XML_KEY_PDP_MARKETING_TYPE      = '/creditkey_productmarketing/type';
     const XML_KEY_PDP_MARKETING_SIZE      = '/creditkey_productmarketing/size';
@@ -115,14 +115,14 @@ class Config
     }
 
     /**
-     * Get array of product IDs selected to display marketing content
+     * Get array of category IDs selected to display marketing content
      *
      * @return array
      */
-    public function getPdpMarketingProducts()
+    public function getPdpMarketingCategories()
     {
-        $productIds = $this->getConfigValue(self::XML_KEY_PDP_MARKETING_PRODUCTS);
-        return explode(',', $productIds);
+        $catIds = $this->getConfigValue(self::XML_KEY_PDP_MARKETING_CATS);
+        return ($catIds === null) ? [] : explode(',', $catIds);
     }
 
     /**

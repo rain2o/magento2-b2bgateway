@@ -41,11 +41,11 @@ class Marketing extends \Magento\Framework\View\Element\Template
     private $taxCalculation;
 
     /**
-     * Stored array of product ids authorized to display marketing content
+     * Stored array of category ids authorized to display marketing content
      *
      * @var array
      */
-    private $authorizedProducts;
+    private $authorizedCategories;
     
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
@@ -97,16 +97,27 @@ class Marketing extends \Magento\Framework\View\Element\Template
     {
         $product = $this->getProduct();
 
-        $price = abs($this->config->getPdpMarketingPrice());
+        // Sanity check product has been loaded
+        if ($product && $product->getId()) {
 
-        if (is_numeric($price) && $price != 0 && $product->getPrice() >= $price) {
-          return false;
+            // Is product in selected price range?
+            $price = abs($this->config->getPdpMarketingPrice());
+            if (is_numeric($price) && $price != 0 && $product->getPrice() >= $price) {
+                return false;
+            }
+
+            if (empty($this->getAuthorizedCategories())) {
+                // If no authorized categories specified we default to all
+                return true;
+            } else {
+                // Is product in any authorized category?
+                $categoryIds = $product->getCategoryIds();
+                $matches = array_intersect($this->getAuthorizedCategories(), $categoryIds);
+                return (bool) (!empty($matches));
+            }
         }
 
-        return (bool) ($product
-                && $product->getId()
-                && (in_array($product->getId(), $this->getAuthorizedProducts()) || count($this->getAuthorizedProducts()) <= 1)
-        );
+        return false;
     }
 
     /**
@@ -156,16 +167,16 @@ class Marketing extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * Return an array of products authorized to display
+     * Return an array of category ids authorized to display
      * our marketing content
      *
      * @return array
      */
-    private function getAuthorizedProducts()
+    private function getAuthorizedCategories()
     {
-        if (!$this->authorizedProducts) {
-            $this->authorizedProducts = $this->config->getPdpMarketingProducts();
+        if (!$this->authorizedCategories) {
+            $this->authorizedCategories = $this->config->getPdpMarketingCategories();
         }
-        return $this->authorizedProducts;
+        return $this->authorizedCategories;
     }
 }

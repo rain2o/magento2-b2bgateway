@@ -20,7 +20,7 @@ From the Magento admin, navigate to ```Stores > Configuration > Sales > Payment 
 
 If `title` is left blank the module will request the active promotion text from the Credit Key API.
 
-The `Marketing Content on Product Pages` section allows you to enable the Credit Key marketing content to be displayed on the selected product detail pages. You can enable/disable this feature globally, select the specific products to allow the content to be displayed on, and select the style of the displayed content.
+The `Marketing Content on Product Pages` section allows you to enable the Credit Key marketing content to be displayed on the selected product detail pages. You can enable/disable this feature globally, select the specific categories to allow the content to be displayed on the products belonging to said categories, and select the style of the displayed content.
 
 ## Customization
 

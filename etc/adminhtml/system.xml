@@ -47,10 +47,10 @@
                     <comment>Enable this to allow our marketing content to be displayed on the selected product pages.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                   </field>
-                  <field id="products" translate="label comment" sortOrder="20" type="multiselect" showInDefault="1" showInWebsite="1">
-                    <label>Products</label>
-                    <comment>Choose the products to display the marketing content on.</comment>
-                    <source_model>CreditKey\B2BGateway\Model\Adminhtml\Source\Products</source_model>
+                  <field id="categories" translate="label comment" sortOrder="20" type="multiselect" showInDefault="1" showInWebsite="1">
+                    <label>Categories</label>
+                    <comment>Marketing content will be displayed in the product view for all products in the selected categories.</comment>
+                    <source_model>CreditKey\B2BGateway\Model\Adminhtml\Source\CategoryList</source_model>
                   </field>
                   <field id="price" translate="label comment" sortOrder="25" type="radios" showInDefault="1" showInWebsite="1">
                     <label>Price Ranges</label>
