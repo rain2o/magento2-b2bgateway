@@ -53,8 +53,6 @@ define(
             },
 
             getCustomTitle: function() {
-              if (this.getTitle() && this.getTitle().trim() !== '') return $('#ck-payment-title').html(this.getTitle());
-
               var totals = quote.getTotals()();
               var charges = new creditKey.Charges(
                 totals.subtotal, 
