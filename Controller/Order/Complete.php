@@ -2,6 +2,7 @@
 namespace CreditKey\B2BGateway\Controller\Order;
 
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Sales\Model\Order\Email\Sender\OrderSender;
 
 /**
  * Complete order controller
@@ -47,11 +48,13 @@ class Complete extends \CreditKey\B2BGateway\Controller\AbstractCreditKeyControl
         \Psr\Log\LoggerInterface $logger,
         \Magento\Quote\Model\QuoteManagement $quoteManagement,
         \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
+        OrderSender $orderSender,
         \Magento\Checkout\Model\Cart $modelCart
     ) {
         $this->quoteManagement = $quoteManagement;
         $this->quoteRepository = $quoteRepository;
         $this->modelCart = $modelCart;
+        $this->orderSender = $orderSender;
 
         parent::__construct(
             $context,
@@ -128,12 +131,14 @@ class Complete extends \CreditKey\B2BGateway\Controller\AbstractCreditKeyControl
 
             $order->setState(\Magento\Sales\Model\Order::STATE_PROCESSING, true);
             $order->setStatus(\Magento\Sales\Model\Order::STATE_PROCESSING);
+            $this->orderSender->send($order);
             $order->save();
 
             $orderPayment = $order->getPayment();
             $orderPayment->setAdditionalInformation('ckOrderId', $ckOrderId);
             $orderPayment->setTransactionId($ckOrderId);
             $orderPayment->setState('paid');
+
             $order->save();
 
             try {
