@@ -78,7 +78,7 @@ define(
 
               return ckClient.get_marketing_display(charges, "checkout", data.type, data.size)
                 .then(function(res) {
-                  originalOrderButton = $('.checkout.primary').last().last();
+                  originalOrderButton = $('.checkout.primary, .btn-proceed-checkout').last().last();
                   originalOrderButtonVal = originalOrderButton.html();
                   $('#ck-payment-title').html(res);
                 });
