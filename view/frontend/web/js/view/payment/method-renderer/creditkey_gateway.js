@@ -22,6 +22,7 @@ define(
         var ckClient = new creditKey.Client(data.publicKey, data.endpoint);
 
         quote.paymentMethod.subscribe(function(method) {
+          console.log('CK TEST:', method.method);
           if (method.method === 'creditkey_gateway') {
             originalOrderButton.html('<span data-bind="i18n: \'Continue with Credit Key\'">Continue with Credit Key</span>');
           } else {
