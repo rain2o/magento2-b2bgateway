@@ -93,8 +93,6 @@ define(
               // validate the form
               if (this.validate() && additionalValidators.validate()) {
                 // if valide then we call our checkout modal
-                heap.track('Magento Redirect to Credit Key', { data: data.redirectUrl });
-              
                 setPaymentInformation(messageContainer, { method: quote.paymentMethod().method })
                   .then(function () {
                     creditKey.checkout(data.redirectUrl, 'modal')
@@ -106,8 +104,6 @@ define(
             redirectAfterPlaceOrder: false,
 
             selectPaymentMethod: function() {
-              heap.track('Magento Payment Selection', { data: this.getData() });
-
               selectPaymentMethodAction(this.getData());
               checkoutData.setSelectedPaymentMethod(this.item.method);
               return true;
