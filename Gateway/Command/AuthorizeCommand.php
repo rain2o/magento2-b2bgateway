@@ -40,8 +40,6 @@ class AuthorizeCommand implements CommandInterface
 
         $this->logger->debug('Authorizing Credit Key Payment: ' . $payment->getId());
 
-        $payment->setIsTransactionClosed(false);
-
         return null;
     }
 }
